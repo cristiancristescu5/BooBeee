@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+    <persistence-unit name="default">
+        <class>com.example.demo.Author.AuthorEntity</class>
+        <class>com.example.demo.Book.BookEntity</class>
+        <class>com.example.demo.BookAuthors.BookAuthorsEntity</class>
+        <class>com.example.demo.BookGenres.BookGenresEntity</class>
+        <class>com.example.demo.BookStatus.BookStatusEntity</class>
+        <class>com.example.demo.Comment.CommentEntity</class>
+        <class>com.example.demo.Genre.GenreEntity</class>
+        <class>com.example.demo.Group.GroupEntity</class>
+        <class>com.example.demo.GroupMembers.GroupMembersEntity</class>
+        <class>com.example.demo.Review.ReviewEntity</class>
+        <class>com.example.demo.ReviewComment.ReviewCommentEntity</class>
+        <class>com.example.demo.User.UserEntity</class>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/BooDB"/>
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.connection.username" value="postgres"/>
+            <property name="hibernate.connection.password" value="STUD3NT"/>
+        </properties>
+    </persistence-unit>
+</persistence>
