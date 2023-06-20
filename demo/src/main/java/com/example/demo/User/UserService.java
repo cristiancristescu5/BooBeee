@@ -1,5 +1,7 @@
 package com.example.demo.User;
 
+import jakarta.persistence.NoResultException;
+
 import java.util.List;
 
 public class UserService {
@@ -28,5 +30,28 @@ public class UserService {
     }
     public void deleteUserById(Long id){
         userRepository.deleteByID(id);
+    }
+    public boolean existsUserByEmail(String email){
+        try {
+            var user = userRepository.findByEmail(email);
+        }catch (NoResultException e){
+            return false;
+        }
+        return true;
+    }
+    public boolean existsUserByName(String name){
+//        try{
+        try{
+            var user = userRepository.findByName(name);
+        }catch (NoResultException e){
+            return false;
+        }
+        return true;
+    }
+    public UserEntity findByName(String name){
+        return userRepository.findByName(name);
+    }
+    public UserEntity findByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 }

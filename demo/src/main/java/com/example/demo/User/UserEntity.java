@@ -11,7 +11,10 @@ import java.sql.Timestamp;
         @NamedQuery(name = "user.findById",
                 query = "select user from UserEntity user where id = ?1"),
         @NamedQuery(name = "user.findAll",
-                query = "SELECT user FROM UserEntity user")
+                query = "SELECT user FROM UserEntity user"),
+        @NamedQuery(name = "user.findByEmail",
+                query = "SELECT user FROM UserEntity user where email = ?1"),
+        @NamedQuery(name = "user.findByName", query = "SELECT user FROM UserEntity user where name = ?1")
 })
 public class UserEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

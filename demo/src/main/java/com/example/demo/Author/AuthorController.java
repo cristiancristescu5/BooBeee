@@ -17,8 +17,6 @@ import java.util.List;
 public class AuthorController extends HttpServlet {
     private final AuthorService authorService = new AuthorService();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Faker faker = new Faker();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/JSON");

@@ -12,7 +12,16 @@ public class UserRepository implements Repository<UserEntity, Long> {
                 .setParameter(1, aLong)
                 .getSingleResult();
     }
-
+    public UserEntity findByEmail(String email){
+        return DataBase.getInstance().createNamedQuery("user.findByEmail", UserEntity.class)
+                .setParameter(1, email)
+                .getSingleResult();
+    }
+    public UserEntity findByName(String name){
+        return DataBase.getInstance().createNamedQuery("user.findByName", UserEntity.class)
+                .setParameter(1, name)
+                .getSingleResult();
+    }
     @Override
     public void deleteByID(Long aLong) {
         DataBase.getInstance().getTransaction().begin();

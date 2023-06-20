@@ -9,9 +9,14 @@ public interface Repository <T extends Serializable, ID> {
     List<T> findAll();
 
     default <S extends T> S save(S entity) {
-        DataBase.getInstance().getTransaction().begin();
-        DataBase.getInstance().persist(entity);
-        DataBase.getInstance().getTransaction().commit();
+        try {
+            DataBase.getInstance().getTransaction().begin();
+            DataBase.getInstance().persist(entity);
+            DataBase.getInstance().getTransaction().commit();
+        }catch (Exception e){
+            DataBase.getInstance().getTransaction().rollback();
+            throw new IllegalArgumentException("Failed to save entity");
+        }
         return entity;
     }
 
