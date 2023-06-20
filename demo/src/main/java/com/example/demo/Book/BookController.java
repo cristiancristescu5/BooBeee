@@ -7,13 +7,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(urlPatterns = {"/books", "/books/*"})
+@WebServlet(urlPatterns = {"/books", "/books/${id}"})
 
 public class BookController extends HttpServlet {
     private final BookService bookService = new BookService();
