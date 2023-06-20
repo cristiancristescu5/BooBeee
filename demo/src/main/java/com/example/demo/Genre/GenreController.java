@@ -7,28 +7,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+
 @WebServlet(urlPatterns = {"/genres", "/genres/*"})
-public class GenreController extends HttpServlet{
+public class GenreController extends HttpServlet {
     private final GenreService genreService = new GenreService();
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setStatus(201);
         resp.setContentType("application/JSON");
         PrintWriter out = resp.getWriter();
-        if(req.getRequestURI().split("/").length==4 && req.getMethod().equals("POST")){
+        var words = req.getRequestURI().split("/");
+        if (words.length == 4 && req.getMethod().equals("POST")) {
             GenreEntity genreEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), GenreEntity.class);
             GenreEntity genre = genreService.addGenre(genreEntity);
             String responseBody = objectMapper.writeValueAsString(genre);
             out.println(responseBody);
             out.close();
-        }else {
-            resp.setStatus(400);
-            out.println("Bad request");
-            out.close();
+            return;
         }
+        resp.setStatus(400);
+        out.println("Bad request");
+        out.close();
     }
 
     @Override
@@ -36,22 +41,22 @@ public class GenreController extends HttpServlet{
         resp.setStatus(200);
         resp.setContentType("application/JSON");
         PrintWriter out = resp.getWriter();
-        if (req.getRequestURI().split("/").length == 4) {
-            var genres = genreService.getAllGenres();
+        var words = req.getRequestURI().split("/");
+        if (words.length == 4) {
+            List<GenreEntity> genres = genreService.getAllGenres();
             String responseBody = objectMapper.writeValueAsString(genres);
             out.println(responseBody);
             out.close();
             return;
         }
-        if(req.getRequestURI().split("/").length==5){
-            String id = req.getRequestURI().split("/")[4];
+        if (words.length == 5) {
+            String id = words[4];
             Long genreId = Long.parseLong(id);
-            boolean ok = true;
             String genreString;
-            try{
+            try {
                 GenreEntity genre = genreService.getGenreById(genreId);
                 genreString = objectMapper.writeValueAsString(genre);
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 resp.setStatus(204);
                 out.println(e.getMessage());
                 out.close();
@@ -72,7 +77,7 @@ public class GenreController extends HttpServlet{
         resp.setStatus(200);
         resp.setContentType("application/JSON");
         PrintWriter out = resp.getWriter();
-        if(words.length==5){
+        if (words.length == 5) {
             String id = words[4];
             Long genreId = Long.parseLong(id);
             GenreEntity genreEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), GenreEntity.class);
@@ -93,7 +98,7 @@ public class GenreController extends HttpServlet{
         resp.setStatus(200);
         resp.setContentType("application/JSON");
         PrintWriter out = resp.getWriter();
-        if(words.length==5){
+        if (words.length == 5) {
             String id = words[4];
             Long genreId = Long.parseLong(id);
             genreService.deleteGenre(genreId);
