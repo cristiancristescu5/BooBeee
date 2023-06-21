@@ -3,6 +3,7 @@ package com.example.demo.Review;
 import com.example.demo.DataBase;
 import com.example.demo.Repository;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 public class ReviewRepository implements Repository<ReviewEntity, Long>{
@@ -25,5 +26,11 @@ public class ReviewRepository implements Repository<ReviewEntity, Long>{
         ReviewEntity r = findByID(aLong);
         DataBase.getInstance().remove(r);
         DataBase.getInstance().getTransaction().commit();
+    }
+
+    public List<ReviewEntity> findByBookId(Long aLong){
+        return DataBase.getInstance().createNamedQuery("reviews.findByBook", ReviewEntity.class)
+                .setParameter(1, aLong)
+                .getResultList();
     }
 }

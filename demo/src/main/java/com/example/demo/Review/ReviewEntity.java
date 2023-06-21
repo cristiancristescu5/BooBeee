@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Table(name = "review", schema = "public", catalog = "BooDB")
 @NamedQuery(name = "reviews.findById", query = "select a from ReviewEntity a where a.id = ?1 ")
 @NamedQuery(name = "reviews.findAll", query = "select a from ReviewEntity a")
+@NamedQuery(name = "reviews.findByBook", query = "select a from ReviewEntity a where a.bookId = ?1")
 public class ReviewEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
