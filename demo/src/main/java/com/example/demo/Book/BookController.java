@@ -8,28 +8,19 @@ import com.example.demo.Genre.GenreEntity;
 import com.example.demo.RequestBodyParser;
 import com.example.demo.Review.ReviewEntity;
 import com.example.demo.Review.ReviewService;
-import com.example.demo.ReviewComment.ReviewCommentRepository;
 import com.example.demo.ReviewComment.ReviewCommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletContext;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
-//@Path("/books")
 @WebServlet(urlPatterns = {"/books", "/books/*"})// /book/id, /book/id/reviews, /book/id/reviews/id, /book/id/reviews/id/comments /
 public class BookController extends HttpServlet {
     private final BookService bookService = new BookService();
