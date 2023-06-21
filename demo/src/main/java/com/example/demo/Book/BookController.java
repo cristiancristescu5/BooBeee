@@ -3,10 +3,13 @@ package com.example.demo.Book;
 import com.example.demo.Author.AuthorEntity;
 import com.example.demo.BookAuthors.BookAuthorsService;
 import com.example.demo.BookGenres.BookGenresService;
+import com.example.demo.Comment.CommentEntity;
 import com.example.demo.Genre.GenreEntity;
 import com.example.demo.RequestBodyParser;
 import com.example.demo.Review.ReviewEntity;
 import com.example.demo.Review.ReviewService;
+import com.example.demo.ReviewComment.ReviewCommentRepository;
+import com.example.demo.ReviewComment.ReviewCommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -34,6 +37,7 @@ public class BookController extends HttpServlet {
     private final BookAuthorsService bookAuthorsService = new BookAuthorsService();
     private final ReviewService reviewService = new ReviewService();
     private final BookGenresService bookGenresService = new BookGenresService();
+    private final ReviewCommentService reviewCommentService = new ReviewCommentService();
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -129,6 +133,7 @@ public class BookController extends HttpServlet {
                 return;
             }
         }
+        // get the genre of a book, url = /books/{bookId}/genre
         if(words.length == 6 && req.getMethod().equals("GET")){
             if(words[5].equals("genre")){
                 String id = words[4];
@@ -138,6 +143,29 @@ public class BookController extends HttpServlet {
                     GenreEntity genre = bookGenresService.findGenreByBookId(bookId);
                     responseBody = objectMapper.writeValueAsString(genre);
                 }catch(Exception e){
+                    out.println(e.getMessage());
+                    resp.setStatus(204);
+                    out.close();
+                    return;
+                }
+                out.println(responseBody);
+                out.close();
+                resp.setStatus(200);
+                return;
+            }
+        }
+        //get the comments of a review, url = /books/{bookId}/reviews/{reviewId}/comments
+        if(words.length == 8 && req.getMethod().equals("GET")){
+            if(words[7].equals("comments")){
+                String id1 = words[4];
+                Long bookId = Long.parseLong(id1);
+                String id2 = words[6];
+                Long reviewId = Long.parseLong(id2);
+                String responseBody;
+                try{
+                    List<CommentEntity> commentEntities = reviewCommentService.findCommentsByReviewId(reviewId);
+                    responseBody = objectMapper.writeValueAsString(commentEntities);
+                }catch (Exception e){
                     out.println(e.getMessage());
                     resp.setStatus(204);
                     out.close();
