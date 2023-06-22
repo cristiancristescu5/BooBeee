@@ -1,6 +1,7 @@
 package com.example.demo.Review;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -30,7 +31,14 @@ public class ReviewEntity implements Serializable {
     @Basic
     @Column(name = "book_id", nullable = true)
     private Long bookId;
-
+    public ReviewEntity(String description, Integer rating){
+        this.rating = rating;
+        this.description = description;
+        this.createdat = new Timestamp(System.currentTimeMillis());
+    }
+    public ReviewEntity(){
+        this.createdat = new Timestamp(System.currentTimeMillis());
+    }
     public long getId() {
         return id;
     }

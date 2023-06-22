@@ -9,6 +9,7 @@ import com.example.demo.RequestBodyParser;
 import com.example.demo.Review.ReviewEntity;
 import com.example.demo.Review.ReviewService;
 import com.example.demo.ReviewComment.ReviewCommentService;
+import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.ws.rs.GET;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ public class BookController extends HttpServlet {
     private final ReviewService reviewService = new ReviewService();
     private final BookGenresService bookGenresService = new BookGenresService();
     private final ReviewCommentService reviewCommentService = new ReviewCommentService();
+    private final UserService userService = new UserService();
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,6 +39,7 @@ public class BookController extends HttpServlet {
         resp.setStatus(201);
         var words = req.getRequestURI().split("/");
         PrintWriter out = resp.getWriter();
+        // /api/v1/books -- aduaga carte
         if (words.length == 4 && req.getMethod().equals("POST")) {
             BookEntity bookEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), BookEntity.class);
             BookEntity book = bookService.addBook(bookEntity);
@@ -44,6 +48,39 @@ public class BookController extends HttpServlet {
             out.close();
             return;
         }
+        // /api/v1/books/{bookId}/reviews -- adugarea unui review
+
+        //{
+        //  "description":
+        //  "rating":
+        //}
+        if(words.length==6 && words[5].equals("reviews")){
+            String responseBody;
+            try {
+                String bookId = words[4];
+                Long bId = Long.parseLong(bookId);
+                Object email = req.getAttribute("email");
+                String userEmail = email.toString();
+                Long userId = userService.findByEmail(userEmail).getId();
+                ReviewEntity reviewEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), ReviewEntity.class);
+                reviewEntity.setBookId(bId);
+                reviewEntity.setUserId(userId);
+                ReviewEntity review = reviewService.create(reviewEntity);
+                responseBody = objectMapper.writeValueAsString(review);
+            }catch (Exception e){
+                out.println(e.getMessage());
+                out.close();
+                resp.setStatus(400);
+                return;
+            }
+            out.println(responseBody);
+            out.close();
+            return;
+
+        }
+
+        // /api/v1/books/{booksId}/reviews/{reviewId} -- adaugarea unui comentariu
+
         resp.setStatus(400);
         out.println("Bad request");
         out.close();
@@ -65,7 +102,7 @@ public class BookController extends HttpServlet {
             return;
         }
         //get only a book, url = /books/{bookId}
-        if (words.length == 5 && req.getMethod().equals("GET")) {
+        if (words.length == 5 && !words[4].split("=")[0].equals("filter") && req.getMethod().equals("GET")) {
             String id = words[4];
             Long bookId = Long.parseLong(id);
             String bookString = new String();
@@ -168,12 +205,32 @@ public class BookController extends HttpServlet {
                 return;
             }
         }
+
+        // /api/v1/books/filter={genre name} filtrarea dupa gen
+        if(words.length == 5 && req.getMethod().equals("GET")){
+            if(words[4].split("=")[0].equals("filter")){
+                String genre = words[4].split("=")[1];
+                String responseBody;
+                try{
+                    List<BookEntity> books = bookGenresService.findByGenre(genre);
+                    responseBody = objectMapper.writeValueAsString(books);
+                }catch(Exception e){
+                    out.println(e.getMessage());
+                    resp.setStatus(204);
+                    out.close();
+                    return;
+                }
+                out.println(responseBody);
+                out.close();
+                resp.setStatus(200);
+                return;
+            }
+        }
         resp.setStatus(400);
         out.println("Bad request");
         out.close();
 
     }
-
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var words = req.getRequestURI().split("/");

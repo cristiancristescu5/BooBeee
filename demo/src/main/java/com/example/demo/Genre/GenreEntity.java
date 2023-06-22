@@ -8,6 +8,7 @@ import java.io.Serializable;
 @Table(name = "genre", schema = "public", catalog = "BooDB")
 @NamedQuery(name = "genres.findById", query = "select a from GenreEntity a where a.id = ?1 ")
 @NamedQuery(name = "genres.findAll", query = "select a from GenreEntity  a")
+@NamedQuery(name = "genres.findByName", query = "select a from GenreEntity a where a.name = ?1")
 public class GenreEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

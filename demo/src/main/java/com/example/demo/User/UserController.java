@@ -1,5 +1,8 @@
 package com.example.demo.User;
 
+import com.example.demo.BookStatus.BookStatusService;
+import com.example.demo.BookStatus.BooksWithStatuses;
+import com.example.demo.RequestBodyParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,67 +18,77 @@ import java.util.List;
 @WebServlet(urlPatterns = {"/users", "/users/*"})
 public class UserController extends HttpServlet {
     private final UserService userService = new UserService();
+    private final BookStatusService bookStatusService = new BookStatusService();
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/JSON");
         response.setStatus(200);
         PrintWriter out = response.getWriter();
-        if (request.getRequestURI().split("/").length == 5) {
-            String id = request.getRequestURI().split("/")[4];
-            System.out.println(id);
-            Long userId = Long.parseLong(id);
-            boolean ok = true;
-            System.out.println(userId);
-            String userString = new String();
+        var words = request.getRequestURI().split("/");
+        // /api/v1/users/{userEmail}
+        if (words.length == 5) {
+            System.out.println(words[4]);
+            String email = words[4];
+            String userString;
             try {
-                UserEntity user = userService.getUserById(userId);
+                UserEntity user = userService.findByEmail(email);
                 userString = objectMapper.writeValueAsString(user);
             } catch (IllegalArgumentException e) {
                 response.setStatus(204);
                 out.println(e.getMessage());
                 out.close();
-                ok = false;
+                return;
             }
-            if (ok) {
-                out.println(userString);
+            out.println(userString);
+            out.close();
+            return;
+
+        }
+        // api/v1/users/{email}/books --> aduce lista de carti ale user ului cu tot cu statusurile sale
+        if (words.length == 6 && words[5].equals("books") && request.getMethod().equals("GET")) {
+            String email = words[4];
+            String responseBody;
+            try {
+                List<BooksWithStatuses> books = bookStatusService.getAllBooks(email);
+                responseBody = objectMapper.writeValueAsString(books);
+            } catch (Exception e) {
+                out.println(e.getMessage());
                 out.close();
+                response.setStatus(400);
+                return;
             }
-        } else if (request.getRequestURI().split("/").length == 4) {
+            out.println(responseBody);
+            out.close();
+            response.setStatus(200);
+        }
+        if (words.length == 4) {
             List<UserEntity> userEntityList = userService.getAllUsers();
             String responseBody = objectMapper.writeValueAsString(userEntityList);
             out.println(responseBody);
             out.close();
-        }else{
-            response.setStatus(400);
-            out.println("Bad request");
-            out.close();
+            return;
         }
+        response.setStatus(400);
+        out.println("Bad request");
+        out.close();
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getRequestURI().split("/").length==5 && req.getMethod().equals("PUT")) {
+        if (req.getRequestURI().split("/").length == 5 && req.getMethod().equals("PUT")) {
             resp.setContentType("application/JSON");
             resp.setStatus(200);
             PrintWriter out = resp.getWriter();
             String id = req.getRequestURI().split("/")[4];
             Long userId = Long.parseLong(id);
-            BufferedReader buff = req.getReader();
-            StringBuilder body = new StringBuilder();
-            String line;
-            while ((line = buff.readLine()) != null) {
-                body.append(line);
-            }
-            buff.close();
-
-            String reqBody = body.toString();
-            UserEntity user = objectMapper.readValue(reqBody, UserEntity.class);
+            UserEntity user = objectMapper.readValue(RequestBodyParser.parseRequest(req), UserEntity.class);
             UserEntity userEntity = userService.updateUser(userId, user);
             String responseBody = objectMapper.writeValueAsString(userEntity);
             out.println(responseBody);
             out.close();
-        }else {
+        } else {
             resp.setStatus(400);
             PrintWriter out = resp.getWriter();
             out.println("Bad request");
@@ -85,7 +98,7 @@ public class UserController extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getRequestURI().split("/").length==4 && request.getMethod().equals("POST")) {
+        if (request.getRequestURI().split("/").length == 4 && request.getMethod().equals("POST")) {
             response.setContentType("application/JSON");
             response.setStatus(201);
             BufferedReader buff = request.getReader();
@@ -103,7 +116,7 @@ public class UserController extends HttpServlet {
             String responseBody = objectMapper.writeValueAsString(userEntity);
             out.println(responseBody);
             out.close();
-        }else {
+        } else {
             response.setStatus(400);
             PrintWriter out = response.getWriter();
             out.println("Bad request");
@@ -113,7 +126,7 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getRequestURI().split("/").length==5 && req.getMethod().equals("DELETE")) {
+        if (req.getRequestURI().split("/").length == 5 && req.getMethod().equals("DELETE")) {
             resp.setContentType("application/JSON");
             resp.setStatus(200);
             PrintWriter out = resp.getWriter();
@@ -122,7 +135,7 @@ public class UserController extends HttpServlet {
             userService.deleteUserById(userId);
             out.println("User deleted");
             out.close();
-        }else{
+        } else {
             resp.setStatus(400);
             PrintWriter out = resp.getWriter();
             out.println("Bad request");

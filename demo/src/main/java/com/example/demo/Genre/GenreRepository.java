@@ -17,6 +17,11 @@ public class GenreRepository implements Repository<GenreEntity, Long>{
         return DataBase.getInstance().createNamedQuery("genres.findAll", GenreEntity.class)
                 .getResultList();
     }
+    public GenreEntity findByName(String name){
+        return DataBase.getInstance().createNamedQuery("genres.findByName", GenreEntity.class)
+                .setParameter(1, name)
+                .getSingleResult();
+    }
     @Override
     public void deleteByID(Long aLong) {
         DataBase.getInstance().getTransaction().begin();

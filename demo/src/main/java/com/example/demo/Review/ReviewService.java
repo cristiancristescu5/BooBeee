@@ -9,4 +9,7 @@ public class ReviewService {
     public List<ReviewEntity> findReviewsByBookId(Long bookId){
         return reviewRepository.findByBookId(bookId);
     }
+    public ReviewEntity create(ReviewEntity entity){
+        return reviewRepository.save(entity);
+    }
 }

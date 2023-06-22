@@ -11,10 +11,10 @@ public class BookStatusRepository implements Repository<BookStatusEntity, Long> 
         query.setParameter(1, aLong);
         return query.getSingleResult();
     }
-    public BookStatusEntity findByUserId(Long aLong){
+    public List<BookStatusEntity> findByUserId(Long aLong){
         var query = DataBase.getInstance().createNamedQuery("book_status.findByUserId", BookStatusEntity.class);
         query.setParameter(1, aLong);
-        return query.getSingleResult();
+        return query.getResultList();
     }
     public List<BookStatusEntity> findByUserIdAndStatus(String status, Long aLong){
         var query = DataBase.getInstance().createNamedQuery("book_status.findByUserIdAndStatus", BookStatusEntity.class);

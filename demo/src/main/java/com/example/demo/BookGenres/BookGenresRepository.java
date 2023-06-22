@@ -1,5 +1,6 @@
 package com.example.demo.BookGenres;
 
+import com.example.demo.Book.BookEntity;
 import com.example.demo.DataBase;
 import com.example.demo.Repository;
 
@@ -16,10 +17,11 @@ public class BookGenresRepository implements Repository<BookGenresEntity, Long>{
     public List<BookGenresEntity> findAll() {
         return null;
     }
-    public BookGenresEntity findByGenreId(Long aLong) {
+
+    public List<BookGenresEntity> findByGenreId(Long aLong) {
         return DataBase.getInstance().createNamedQuery("book_genre.findByGenreId", BookGenresEntity.class)
                 .setParameter(1, aLong)
-                .getSingleResult();
+                .getResultList();
     }
     public BookGenresEntity findByBookId(Long aLong) {
         return DataBase.getInstance().createNamedQuery("book_genre.findByBookId", BookGenresEntity.class)
@@ -33,4 +35,5 @@ public class BookGenresRepository implements Repository<BookGenresEntity, Long>{
         DataBase.getInstance().remove(b);
         DataBase.getInstance().getTransaction().commit();
     }
+
 }

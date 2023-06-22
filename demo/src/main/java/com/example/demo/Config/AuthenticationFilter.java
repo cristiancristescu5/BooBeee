@@ -18,7 +18,8 @@ public class AuthenticationFilter implements Filter {
         System.out.println("aiiiiiiiiiiiiiiiiiiiici");
         HttpServletRequest request = ((HttpServletRequest)servletRequest);
         HttpServletResponse response = ((HttpServletResponse)servletResponse);
-        if(request.getMethod().equals("POST")) {
+        var words = request.getRequestURI().split("/");
+        if(request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
