@@ -26,7 +26,7 @@ public class GroupController extends HttpServlet {
     private static final UserService userService = new UserService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/JSON");
         resp.setStatus(201);
         var words = req.getRequestURI().split("/");
@@ -86,23 +86,21 @@ public class GroupController extends HttpServlet {
                 resp.setStatus(400);
                 return;
             }
-//            GroupMembersEntity groupMembersEntity = groupMembersService.findMemberInAGroup(userId, groupId);
-
             try {
                 System.out.println("verific user in grup");
                 groupMembersService.findMemberInAGroup(userId, groupId);//problema
 
+                resp.setStatus(400);
                 out.println("You are already in this group");
                 out.close();
-                resp.setStatus(400);
                 return;
             }catch (NoResultException e){
                 System.out.println("nu exista user in grup");
                 GroupMembersEntity groupMembersEntity = groupMembersService.addMember(groupId, userId);
                 responseBody = objectMapper.writeValueAsString(groupMembersEntity);
+                resp.setStatus(201);
                 out.println(responseBody);
                 out.close();
-                resp.setStatus(201);
                 return;
             }
 

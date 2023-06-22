@@ -51,6 +51,8 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
                 .getSingleResult();
     }
     public GroupMembersEntity findByUserIdAndGroupId(Long userId, Long groupId){
+        System.out.println(userId);
+        System.out.println(groupId);
         return DataBase.getInstance().createNamedQuery("groupMembers.findByGroupIdAndUserId", GroupMembersEntity.class)
                 .setParameter(1, userId)
                 .setParameter(2, groupId)

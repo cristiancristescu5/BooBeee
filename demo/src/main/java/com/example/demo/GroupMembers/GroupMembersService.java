@@ -30,6 +30,8 @@ public class GroupMembersService {
         return groupMembers;
     }
     public GroupMembersEntity findMemberInAGroup(Long userId, Long groupId){
+        System.out.println(userId );
+        System.out.println(groupId);
         return groupMembersRepository.findByUserIdAndGroupId(userId, groupId);
     }
 }
