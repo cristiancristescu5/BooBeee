@@ -1,6 +1,7 @@
 package com.example.demo.GroupMembers;
 
 import com.example.demo.DataBase;
+import com.example.demo.Group.GroupEntity;
 import com.example.demo.Repository;
 
 import java.util.List;
@@ -42,5 +43,11 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
         DataBase.getInstance().getTransaction().begin();
         DataBase.getInstance().remove(g1);
         DataBase.getInstance().getTransaction().commit();
+    }
+
+    public GroupEntity findIdByGroupName(String name){
+        return DataBase.getInstance().createNamedQuery("groups.findIdByName", GroupEntity.class)
+                .setParameter(1, name)
+                .getSingleResult();
     }
 }

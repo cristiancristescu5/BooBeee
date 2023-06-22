@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.spec.ECField;
 
 @WebServlet(urlPatterns = {"/groups", "/groups/*"})
 public class GroupController extends HttpServlet {
@@ -21,6 +22,7 @@ public class GroupController extends HttpServlet {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final GroupMembersService groupMembersService = new GroupMembersService();
     private static final UserService userService = new UserService();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/JSON");
@@ -29,15 +31,21 @@ public class GroupController extends HttpServlet {
         String email = req.getAttribute("email").toString();
         PrintWriter out = resp.getWriter();
         // /api/v1/groups
-        if(words.length == 4 && req.getMethod().equals("POST")){
+        if (words.length == 4 && req.getMethod().equals("POST")) {
             GroupEntity groupEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), GroupEntity.class);
+            if (groupEntity.getName().split(" ").length != 1) {
+                out.println("Invalid group name");
+                out.close();
+                resp.setStatus(400);
+                return;
+            }
             boolean found = true;
             try {
                 GroupEntity existingGroup = groupService.findByName(groupEntity.getName());
-            }catch (NoResultException e){
+            } catch (NoResultException e) {
                 found = false;
             }
-            if(!found) {
+            if (!found) {
                 Long userId = userService.findByEmail(email).getId();
                 groupEntity.setMembersCount(groupEntity.getMembersCount() + 1);
                 GroupEntity group = groupService.addGroup(groupEntity);
@@ -54,6 +62,29 @@ public class GroupController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // /groups/{groupName}/groupMembers
+        var words = req.getRequestURI().split("/");
+        PrintWriter out = resp.getWriter();
+        resp.setStatus(200);
+        resp.setContentType("application/JSON");
+        if (words.length == 6) {
+            String groupName = words[4];
+            String responseBody;
+            try {
+                responseBody = objectMapper.writeValueAsString(groupMembersService.findGroupMembers(groupName));
+            } catch (Exception e) {
+                out.println("Bad request");
+                out.close();
+                resp.setStatus(400);
+                return;
+            }
+            out.println(responseBody);
+            out.close();
+            return;
+        }
+        out.println("Bad request");
+        out.close();
+        resp.setStatus(400);
 
     }
 

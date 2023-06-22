@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @NamedQuery(name = "groups.findById", query = "select a from GroupEntity a where a.id = ?1 ")
 @NamedQuery(name = "groups.findAll", query = "select a from GroupEntity a")
 @NamedQuery(name = "groups.findByName", query = "select  a from GroupEntity a where a.name = ?1 ")
+@NamedQuery(name = "groups.findIdByName", query = "select a from GroupEntity a where a.name = ?1")
 public class GroupEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
