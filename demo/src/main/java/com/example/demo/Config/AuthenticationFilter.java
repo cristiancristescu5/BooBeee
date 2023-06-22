@@ -15,7 +15,7 @@ public class AuthenticationFilter implements Filter {
     private static final UserService userService = new UserService();
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        System.out.println("aiiiiiiiiiiiiiiiiiiiici");
+//        System.out.println("aiiiiiiiiiiiiiiiiiiiici");
         HttpServletRequest request = ((HttpServletRequest)servletRequest);
         HttpServletResponse response = ((HttpServletResponse)servletResponse);
         var words = request.getRequestURI().split("/");
@@ -30,6 +30,7 @@ public class AuthenticationFilter implements Filter {
                     String email = claimsJws.getBody().getSubject();
                     if (isUserPresent(email)) {
                         request.setAttribute("email", email);
+                        System.out.println(email);
                         filterChain.doFilter(request, response);
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -36,4 +36,9 @@ public class GroupRepository implements Repository<GroupEntity, Long> {
         DataBase.getInstance().getTransaction().commit();
         return g;
     }
+    public GroupEntity findByName(String name){
+        return DataBase.getInstance().createNamedQuery("groups.findByName", GroupEntity.class)
+                .setParameter(1, name)
+                .getSingleResult();
+    }
 }

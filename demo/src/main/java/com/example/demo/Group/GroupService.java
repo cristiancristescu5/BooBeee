@@ -1,5 +1,6 @@
 package com.example.demo.Group;
 
+import javax.swing.*;
 import java.util.List;
 
 public class GroupService {
@@ -29,6 +30,9 @@ public class GroupService {
         }
         group = groupEntity;
         return groupRepository.updateById(id, group);
+    }
+    public GroupEntity findByName(String name){
+        return groupRepository.findByName(name);
     }
     public List<GroupEntity> getAllGroups(){
         return groupRepository.findAll();

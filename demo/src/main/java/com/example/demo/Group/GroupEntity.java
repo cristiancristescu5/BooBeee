@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Table(name = "group_", schema = "public", catalog = "BooDB")
 @NamedQuery(name = "groups.findById", query = "select a from GroupEntity a where a.id = ?1 ")
 @NamedQuery(name = "groups.findAll", query = "select a from GroupEntity a")
+@NamedQuery(name = "groups.findByName", query = "select  a from GroupEntity a where a.name = ?1 ")
 public class GroupEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -26,6 +27,18 @@ public class GroupEntity implements Serializable {
     @Basic
     @Column(name = "members_count", nullable = true)
     private Integer membersCount;
+
+    public GroupEntity(){
+        this.createdat = new Timestamp(System.currentTimeMillis());
+        this.membersCount = 0;
+    }
+
+    public GroupEntity(String name, String description){
+        this.name = name;
+        this.description = description;
+        this.createdat = new Timestamp(System.currentTimeMillis());
+        this.membersCount = 0;
+    }
 
     public long getId() {
         return id;

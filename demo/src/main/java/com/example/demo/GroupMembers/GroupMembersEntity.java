@@ -45,6 +45,13 @@ public class GroupMembersEntity implements Serializable {
         this.groupId = groupId;
     }
 
+    public GroupMembersEntity(){}
+
+    public GroupMembersEntity(Long userId, Long groupId){
+        this.userId = userId;
+        this.groupId = groupId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

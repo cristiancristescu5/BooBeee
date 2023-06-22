@@ -17,6 +17,10 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
                 .setParameter(1, aLong).getResultList();
     }
 
+    public GroupMembersEntity addGroupMember(Long groupId, Long userId){
+        return save(new GroupMembersEntity(userId, groupId));
+    }
+
     @Override
     public GroupMembersEntity findByID(Long aLong) {
         return null;

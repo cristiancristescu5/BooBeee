@@ -28,9 +28,10 @@ public class UserController extends HttpServlet {
         PrintWriter out = response.getWriter();
         var words = request.getRequestURI().split("/");
         // /api/v1/users/{userEmail}
-        if (words.length == 5) {
-            System.out.println(words[4]);
-            String email = words[4];
+
+        if (words.length == 4) {
+            System.out.println(words[3]);
+            String email = request.getAttribute("email").toString();
             String userString;
             try {
                 UserEntity user = userService.findByEmail(email);
@@ -46,9 +47,10 @@ public class UserController extends HttpServlet {
             return;
 
         }
+
         // api/v1/users/{email}/books --> aduce lista de carti ale user ului cu tot cu statusurile sale
-        if (words.length == 6 && words[5].equals("books") && request.getMethod().equals("GET")) {
-            String email = words[4];
+        if (words.length == 5 && words[4].equals("books") && request.getMethod().equals("GET")) {
+            String email = request.getAttribute("email").toString();
             String responseBody;
             try {
                 List<BooksWithStatuses> books = bookStatusService.getAllBooks(email);
@@ -62,14 +64,15 @@ public class UserController extends HttpServlet {
             out.println(responseBody);
             out.close();
             response.setStatus(200);
-        }
-        if (words.length == 4) {
-            List<UserEntity> userEntityList = userService.getAllUsers();
-            String responseBody = objectMapper.writeValueAsString(userEntityList);
-            out.println(responseBody);
-            out.close();
             return;
         }
+//        if (words.length == 4) {
+//            List<UserEntity> userEntityList = userService.getAllUsers();
+//            String responseBody = objectMapper.writeValueAsString(userEntityList);
+//            out.println(responseBody);
+//            out.close();
+//            return;
+//        }
         response.setStatus(400);
         out.println("Bad request");
         out.close();

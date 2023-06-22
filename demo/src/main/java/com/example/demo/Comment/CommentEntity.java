@@ -24,7 +24,14 @@ public class CommentEntity implements Serializable {
     @Basic
     @Column(name = "createdat", nullable = true)
     private Timestamp createdat;
+    public CommentEntity(String description){
+        this.description = description;
+        this.createdat = new Timestamp(System.currentTimeMillis());
+    }
 
+    public CommentEntity(){
+        this.createdat = new Timestamp(System.currentTimeMillis());
+    }
     public long getId() {
         return id;
     }

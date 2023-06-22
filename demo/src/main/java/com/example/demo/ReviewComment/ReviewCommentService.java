@@ -20,6 +20,8 @@ public class ReviewCommentService {
             commentEntities.add(commentRepository.findByID(r.getCommentId()));
         }
         return  commentEntities;
-
+    }
+    public ReviewCommentEntity addCommentToReview(Long userId, Long reviewID, Long commentId){
+        return reviewCommentRepository.save(new ReviewCommentEntity(userId, reviewID, commentId));
     }
 }

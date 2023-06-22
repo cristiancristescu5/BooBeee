@@ -57,6 +57,13 @@ public class ReviewCommentEntity implements Serializable {
         this.commentId = commentId;
     }
 
+    public ReviewCommentEntity(Long userId, Long reviewId, Long commentId){
+        this.userId = userId;
+        this.reviewId = reviewId;
+        this.commentId = commentId;
+    }
+    public ReviewCommentEntity(){}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
