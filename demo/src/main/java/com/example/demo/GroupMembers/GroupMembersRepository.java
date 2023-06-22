@@ -50,4 +50,10 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
                 .setParameter(1, name)
                 .getSingleResult();
     }
+    public GroupMembersEntity findByUserIdAndGroupId(Long userId, Long groupId){
+        return DataBase.getInstance().createNamedQuery("groupMembers.findByGroupIdAndUserId", GroupMembersEntity.class)
+                .setParameter(1, userId)
+                .setParameter(2, groupId)
+                .getSingleResult();
+    }
 }

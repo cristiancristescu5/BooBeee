@@ -9,6 +9,7 @@ import java.io.Serializable;
 @NamedQuery(name = "groupMembers.findByUserId", query = "select a from GroupMembersEntity a where a.userId = ?1 ")
 @NamedQuery(name = "groupMembers.findByGroupId", query = "select a from GroupMembersEntity a where a.groupId = ?1 ")
 @NamedQuery(name = "groupMembers.findAll", query = "select a from GroupMembersEntity  a")
+@NamedQuery(name = "groupMembers.findByGroupIdAndUserId", query = "select a from GroupMembersEntity a where a.userId = ?1 and a.groupId =?2 ")
 public class GroupMembersEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

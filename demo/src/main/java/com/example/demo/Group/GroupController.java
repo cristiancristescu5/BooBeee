@@ -1,7 +1,9 @@
 package com.example.demo.Group;
 
+import com.example.demo.GroupMembers.GroupMembersEntity;
 import com.example.demo.GroupMembers.GroupMembersService;
 import com.example.demo.RequestBodyParser;
+import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.NoResultException;
@@ -55,8 +57,58 @@ public class GroupController extends HttpServlet {
                 return;
             }
         }
+
+        // /api/v1/groups/{groupName}
+        if(words.length == 5){
+//            System.out.println("aiiiivi");
+            String groupName = words[4];
+            String responseBody;
+            Long groupId;
+            try{
+                GroupEntity group = groupService.findByName(groupName);
+                groupId = group.getId();
+            }catch (NoResultException e){
+                out.println("The group " + groupName + " does not exist");
+                out.close();
+                System.out.println("pica grup");
+                resp.setStatus(400);
+                return;
+            }
+            Long userId;
+            try{
+                System.out.println("verific user");
+                UserEntity user = userService.findByEmail(email);
+                userId = user.getId();
+            }catch (NoResultException e){
+                System.out.println("nu exista user");
+                out.println("User with email " + email + " does not exist");
+                out.close();
+                resp.setStatus(400);
+                return;
+            }
+//            GroupMembersEntity groupMembersEntity = groupMembersService.findMemberInAGroup(userId, groupId);
+
+            try {
+                System.out.println("verific user in grup");
+                groupMembersService.findMemberInAGroup(userId, groupId);//problema
+
+                out.println("You are already in this group");
+                out.close();
+                resp.setStatus(400);
+                return;
+            }catch (NoResultException e){
+                System.out.println("nu exista user in grup");
+                GroupMembersEntity groupMembersEntity = groupMembersService.addMember(groupId, userId);
+                responseBody = objectMapper.writeValueAsString(groupMembersEntity);
+                out.println(responseBody);
+                out.close();
+                resp.setStatus(201);
+                return;
+            }
+
+        }
         resp.setStatus(400);
-        out.println("BadRequest");
+        out.println("Bad Request");
         out.close();
     }
 

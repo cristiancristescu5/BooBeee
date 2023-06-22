@@ -41,4 +41,11 @@ public class GroupRepository implements Repository<GroupEntity, Long> {
                 .setParameter(1, name)
                 .getSingleResult();
     }
+    public void updateMembersCount(String name){
+        GroupEntity group = findByName(name);
+        group.setMembersCount(group.getMembersCount()+1);
+        DataBase.getInstance().getTransaction().begin();
+        DataBase.getInstance().persist(group);
+        DataBase.getInstance().getTransaction().commit();
+    }
 }

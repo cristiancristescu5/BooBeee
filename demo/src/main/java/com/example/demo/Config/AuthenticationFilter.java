@@ -39,6 +39,7 @@ public class AuthenticationFilter implements Filter {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
             } else {
+                System.out.println("aici1");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }else{

@@ -14,6 +14,8 @@ public class GroupMembersService {
     private final UserRepository userRepository = new UserRepository();
 
     public GroupMembersEntity addMember(Long groupId, Long userId) {
+        GroupEntity group = groupRepository.findByID(groupId);
+        groupRepository.updateMembersCount(group.getName());
         return groupMembersRepository.save(new GroupMembersEntity(userId, groupId));
     }
 
@@ -26,5 +28,8 @@ public class GroupMembersService {
             groupMembers.add(new GroupMembers(g.getUserId(), user.getName(), user.getPictureurl()));
         }
         return groupMembers;
+    }
+    public GroupMembersEntity findMemberInAGroup(Long userId, Long groupId){
+        return groupMembersRepository.findByUserIdAndGroupId(userId, groupId);
     }
 }
