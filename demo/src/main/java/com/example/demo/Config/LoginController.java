@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -47,6 +46,11 @@ public class LoginController extends HttpServlet {
         public void setPassword(String password) {
             this.password = password;
         }
+
+        @Override
+        public String toString() {
+            return this.email + " " + this.password;
+        }
     }
     private LoginMessage getMessage(HttpServletRequest req) throws IOException {
         String requestBody = RequestBodyParser.parseRequest(req);
@@ -54,9 +58,13 @@ public class LoginController extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/JSON");
-        resp.setStatus(200);
+        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
+
         LoginMessage login = getMessage(req);
+        resp.setContentType("text/plain");
+        resp.setStatus(200);
+        System.out.println(login.toString());
+        System.out.println("aici");
         String email = login.getEmail();
         String password = login.getPassword();
         PrintWriter out = resp.getWriter();
