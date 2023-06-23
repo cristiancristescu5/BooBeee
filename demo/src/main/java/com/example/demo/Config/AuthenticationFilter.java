@@ -10,16 +10,18 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+@WebFilter
 public class AuthenticationFilter implements Filter {
     private static final String SECRET_KEY = "wsdefrgthyjutrefwderetrhgnjmk12w3e4r5t6y7u8i9o0p";
     private static final UserService userService = new UserService();
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//        System.out.println("aiiiiiiiiiiiiiiiiiiiici");
+        System.out.println("aiiiiiiiiiiiiiiiiiiiici");
         HttpServletRequest request = ((HttpServletRequest)servletRequest);
         HttpServletResponse response = ((HttpServletResponse)servletResponse);
         var words = request.getRequestURI().split("/");
-        if(request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))) {
+        if(request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))
+                ||(request.getMethod().equals("GET") && words[3].equals("export-as-CSV"))) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
@@ -33,9 +35,11 @@ public class AuthenticationFilter implements Filter {
                         System.out.println(email);
                         filterChain.doFilter(request, response);
                     } else {
+                        System.out.println("aici2");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     }
                 } catch (Exception e) {
+                    System.out.println("aici exception");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
             } else {

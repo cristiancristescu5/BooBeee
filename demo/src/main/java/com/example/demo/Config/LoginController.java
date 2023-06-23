@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @WebServlet (urlPatterns = {"/login"})
+
 public class LoginController extends HttpServlet {
     private static final String SECRET_KEY = "wsdefrgthyjutrefwderetrhgnjmk12w3e4r5t6y7u8i9o0p";
     private static final UserService userService = new UserService();
@@ -61,6 +62,9 @@ public class LoginController extends HttpServlet {
         resp.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         LoginMessage login = getMessage(req);
+//        resp.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+//        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+//        resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         resp.setContentType("text/plain");
         resp.setStatus(200);
         System.out.println(login.toString());

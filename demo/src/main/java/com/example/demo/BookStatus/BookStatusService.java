@@ -28,4 +28,11 @@ public class BookStatusService {
         }
         return books;
     }
+    public BookStatusEntity getBookStatusByBookIdAndStatusAndUserEmail(Long bookId, String email){
+        UserEntity user = userRepository.findByEmail(email);
+        return bookStatusRepository.findByAllCredentials(bookId, user.getId());
+    }
+    public BookStatusEntity addBookStatus(BookStatusEntity bookStatusEntity){
+        return bookStatusRepository.save(bookStatusEntity);
+    }
 }

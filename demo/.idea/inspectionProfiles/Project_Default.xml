@@ -8,5 +8,21 @@
         </set>
       </option>
     </inspection_tool>
+    <inspection_tool class="MavenPackageUpdate" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="excludeList">
+        <list>
+          <option value="jakarta.websocket:jakarta.websocket-api" />
+          <option value="javax.xml.bind:jaxb-api" />
+          <option value="org.glassfish.jaxb:jaxb-runtime" />
+          <option value="org.hibernate.orm:hibernate-core" />
+          <option value="org.hibernate.orm:hibernate-core" />
+          <option value="org.hibernate.orm:hibernate-core" />
+          <option value="org.hibernate.orm:hibernate-core" />
+          <option value="org.hibernate.orm:hibernate-core" />
+          <option value="org.junit.jupiter:junit-jupiter-api" />
+          <option value="org.junit.jupiter:junit-jupiter-engine" />
+        </list>
+      </option>
+    </inspection_tool>
   </profile>
 </component>

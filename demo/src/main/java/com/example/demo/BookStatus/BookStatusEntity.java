@@ -12,7 +12,9 @@ import java.io.Serializable;
         @NamedQuery(name = "book_status.findByUserId",
                 query = "select b from BookStatusEntity b where b.userId = ?1 "),
         @NamedQuery(name = "book_status.findByUserIdAndStatus",
-                query = "select e from BookStatusEntity e where e.userId = ?1 and e.status = ?2")
+                query = "select e from BookStatusEntity e where e.userId = ?1 and e.status = ?2"),
+        @NamedQuery(name = "book_status.findByBookIdAndBookId",
+                query = "select e from BookStatusEntity e where e.bookId = ?1 and e.userId = ?2")
 })
 public class BookStatusEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,13 @@ public class BookStatusEntity implements Serializable {
     @Basic
     @Column(name = "status", nullable = false, length = -1)
     private String status;
+
+    public BookStatusEntity(Long id, Long bookId, String bookStatus) {
+        this.userId = id;
+        this.bookId = bookId;
+        this.status = bookStatus;
+    }
+    public BookStatusEntity(){}
 
     public long getId() {
         return id;
