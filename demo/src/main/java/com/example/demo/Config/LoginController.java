@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,20 +54,35 @@ public class LoginController extends HttpServlet {
             return this.email + " " + this.password;
         }
     }
+
+    public static class JWTMessage implements Serializable{
+        private String token;
+        public JWTMessage(String token){
+            this.token = token;
+        }
+        public JWTMessage(){}
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+    }
     private LoginMessage getMessage(HttpServletRequest req) throws IOException {
         String requestBody = RequestBodyParser.parseRequest(req);
         return objectMapper.readValue(requestBody, LoginMessage.class);
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
+//        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         LoginMessage login = getMessage(req);
 //        resp.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
 //        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 //        resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        resp.setContentType("text/plain");
-        resp.setStatus(200);
+        resp.setContentType("application/json");
+        resp.setStatus(201);
         System.out.println(login.toString());
         System.out.println("aici");
         String email = login.getEmail();
@@ -91,8 +107,26 @@ public class LoginController extends HttpServlet {
             out.close();
             return;
         }
-        resp.setHeader("Authorization", "Bearer " + generateJWTToken(email));
-        out.println(generateJWTToken(email));
+        String token = generateJWTToken(email);
+        JWTMessage jwtMessage = new JWTMessage(token);
+        String response;
+        try {
+            response = objectMapper.writeValueAsString(jwtMessage);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        resp.setHeader("Authorization", "Bearer " + token);
+        out.println(response);
+        Cookie cookie = new Cookie("JWTToken", token);
+        cookie.setSecure(true);
+        cookie.setMaxAge((int)System.currentTimeMillis()+864000000);
+        resp.addCookie(cookie);
+
+//        try {
+//            System.out.println(out.toString());
+//        }catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
         out.close();
         //TODO: add token
     }

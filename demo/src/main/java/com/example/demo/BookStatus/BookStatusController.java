@@ -54,9 +54,15 @@ public class BookStatusController extends HttpServlet {
             BookStatusEntity bookStatusEntity = bookStatusService.addBookStatus(new BookStatusEntity(user.getId(), bookId, bookStatus));
             responseBody = objectMapper.writeValueAsString(bookStatusEntity);
             out.println(responseBody);
+            System.out.println(responseBody);
+            String finalResponseBody = resp.getOutputStream().toString();
+            System.out.println(finalResponseBody);
             out.close();
-            return;
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
 }
