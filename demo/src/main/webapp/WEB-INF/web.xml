@@ -13,16 +13,27 @@
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
         <init-param>
             <param-name>cors.allowed.origins</param-name>
-            <param-value>*</param-value>
+            <param-value>http://localhost:3000</param-value>
         </init-param>
         <init-param>
             <param-name>cors.allowed.methods</param-name>
             <param-value>GET,POST,HEAD,OPTIONS,PUT, DELETE</param-value>
         </init-param>
         <init-param>
-            <param-name>cors-allowed-headers</param-name>
-            <param-value>Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Set-Cookie</param-value>
+            <param-name>cors.support.credentials</param-name>
+            <param-value>true</param-value>
         </init-param>
+        <init-param>
+            <param-name>cors-allowed-headers</param-name>
+            <param-value>Origin, Accept, X-Requested-With,
+                Content-Type, Access-Control-Request-Method,
+                Access-Control-Request-Headers, Set-Cookie,
+                Access-Control-Allow-Credentials, Authorization</param-value>
+        </init-param>
+<!--        <init-param>-->
+<!--            <param-name>withCredentials</param-name>-->
+<!--            <param-value>true</param-value>-->
+<!--        </init-param>-->
     </filter>
 
     <filter-mapping>
@@ -62,7 +73,7 @@
 
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>
-        <url-pattern>/login</url-pattern>
+        <url-pattern>*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

@@ -19,20 +19,25 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
 
-@WebServlet (urlPatterns = {"/login"})
+@WebServlet(urlPatterns = {"/login"})
 
 public class LoginController extends HttpServlet {
     private static final String SECRET_KEY = "wsdefrgthyjutrefwderetrhgnjmk12w3e4r5t6y7u8i9o0p";
     private static final UserService userService = new UserService();
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static class LoginMessage implements Serializable {
         private String email;
         private String password;
-        public LoginMessage(String email, String password){
+
+        public LoginMessage(String email, String password) {
             this.email = email;
             this.password = password;
         }
-        public LoginMessage(){}
+
+        public LoginMessage() {
+        }
+
         public String getEmail() {
             return email;
         }
@@ -55,12 +60,16 @@ public class LoginController extends HttpServlet {
         }
     }
 
-    public static class JWTMessage implements Serializable{
+    public static class JWTMessage implements Serializable {
         private String token;
-        public JWTMessage(String token){
+
+        public JWTMessage(String token) {
             this.token = token;
         }
-        public JWTMessage(){}
+
+        public JWTMessage() {
+        }
+
         public String getToken() {
             return token;
         }
@@ -69,10 +78,12 @@ public class LoginController extends HttpServlet {
             this.token = token;
         }
     }
+
     private LoginMessage getMessage(HttpServletRequest req) throws IOException {
         String requestBody = RequestBodyParser.parseRequest(req);
         return objectMapper.readValue(requestBody, LoginMessage.class);
     }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
@@ -85,7 +96,7 @@ public class LoginController extends HttpServlet {
         String email = login.getEmail();
         String password = login.getPassword();
         PrintWriter out = resp.getWriter();
-        if(!userService.existsUserByEmail(email)){
+        if (!userService.existsUserByEmail(email)) {
             resp.setStatus(404);
             out.println("User with this email does not exist");
             out.close();
@@ -98,7 +109,7 @@ public class LoginController extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        if(!userPassword.equals(password)){
+        if (!userPassword.equals(password)) {
             resp.setStatus(401);
             out.println("Wrong password");
             out.close();
@@ -109,21 +120,22 @@ public class LoginController extends HttpServlet {
         String response;
         try {
             response = objectMapper.writeValueAsString(jwtMessage);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         resp.setHeader("Authorization", "Bearer " + token);
+//        resp.setHeader("withCredentials", "true");
         Cookie cookie = new Cookie("JWTToken", token);
         cookie.setPath("/");
         cookie.setDomain("localhost");
         cookie.setMaxAge((int)System.currentTimeMillis()+864_000);
-        resp.addCookie(cookie);
+
         resp.addCookie(cookie);
         out.println(response);
         out.close();
     }
 
-    private String generateJWTToken(String email){
+    private String generateJWTToken(String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 864000000);
         return Jwts.builder()
