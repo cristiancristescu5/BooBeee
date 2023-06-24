@@ -78,9 +78,6 @@ public class LoginController extends HttpServlet {
 //        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         LoginMessage login = getMessage(req);
-//        resp.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-//        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//        resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         resp.setContentType("application/json");
         resp.setStatus(201);
         System.out.println(login.toString());
@@ -116,19 +113,14 @@ public class LoginController extends HttpServlet {
             throw new RuntimeException(e);
         }
         resp.setHeader("Authorization", "Bearer " + token);
-        out.println(response);
         Cookie cookie = new Cookie("JWTToken", token);
-        cookie.setSecure(true);
-        cookie.setMaxAge((int)System.currentTimeMillis()+864000000);
+        cookie.setPath("/");
+        cookie.setDomain("localhost");
+        cookie.setMaxAge((int)System.currentTimeMillis()+864_000);
         resp.addCookie(cookie);
-
-//        try {
-//            System.out.println(out.toString());
-//        }catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
+        resp.addCookie(cookie);
+        out.println(response);
         out.close();
-        //TODO: add token
     }
 
     private String generateJWTToken(String email){

@@ -59,15 +59,15 @@ public class GroupController extends HttpServlet {
         }
 
         // /api/v1/groups/{groupName}
-        if(words.length == 5){
+        if (words.length == 5) {
 //            System.out.println("aiiiivi");
             String groupName = words[4];
             String responseBody;
             Long groupId;
-            try{
+            try {
                 GroupEntity group = groupService.findByName(groupName);
                 groupId = group.getId();
-            }catch (NoResultException e){
+            } catch (NoResultException e) {
                 out.println("The group " + groupName + " does not exist");
                 out.close();
                 System.out.println("pica grup");
@@ -75,11 +75,11 @@ public class GroupController extends HttpServlet {
                 return;
             }
             Long userId;
-            try{
+            try {
                 System.out.println("verific user");
                 UserEntity user = userService.findByEmail(email);
                 userId = user.getId();
-            }catch (NoResultException e){
+            } catch (NoResultException e) {
                 System.out.println("nu exista user");
                 out.println("User with email " + email + " does not exist");
                 out.close();
@@ -94,7 +94,7 @@ public class GroupController extends HttpServlet {
                 out.println("You are already in this group");
                 out.close();
                 return;
-            }catch (NoResultException e){
+            } catch (NoResultException e) {
                 System.out.println("nu exista user in grup");
                 GroupMembersEntity groupMembersEntity = groupMembersService.addMember(groupId, userId);
                 responseBody = objectMapper.writeValueAsString(groupMembersEntity);
@@ -143,9 +143,39 @@ public class GroupController extends HttpServlet {
 
     }
 
+    // /groups/{groupName}/groupMembers
+    // _ api v1 groups groupName
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        resp.setContentType("test/plain");
+        resp.setStatus(200);
+        PrintWriter out = resp.getWriter();
+        String email = req.getAttribute("email").toString();
+        var words = req.getRequestURI().split("/");
+        String groupName = words[4];
+        UserEntity entity = userService.findByEmail(email);
+        GroupMembersEntity groupMembersEntity;
+        GroupEntity groupEntity;
+        try {
+            groupEntity = groupService.findByName(groupName);
+            groupMembersEntity = groupMembersService.findMemberInAGroup(entity.getId(), groupEntity.getId());
+            groupMembersService.deleteMember(groupMembersEntity.getId());
+        } catch (NoResultException e) {
+            System.out.println(e.getMessage());
+            out.println("You are not in this group");
+            out.close();
+            resp.setStatus(400);
+            return;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            out.println("Bad request");
+            out.close();
+            resp.setStatus(400);
+            return;
+        }
+        out.println("You left the group");
+        out.close();
+        resp.setStatus(200);
     }
 
 }

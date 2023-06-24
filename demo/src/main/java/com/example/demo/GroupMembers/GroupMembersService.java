@@ -34,4 +34,9 @@ public class GroupMembersService {
         System.out.println(groupId);
         return groupMembersRepository.findByUserIdAndGroupId(userId, groupId);
     }
+    public void deleteMember(Long id){
+        GroupMembersEntity groupMembersEntity = groupMembersRepository.findByID(id);
+        groupRepository.updateMembersCountMinus(groupRepository.findByID(groupMembersEntity.getGroupId()).getName());
+        groupMembersRepository.deleteByID(groupMembersEntity.getId());
+    }
 }

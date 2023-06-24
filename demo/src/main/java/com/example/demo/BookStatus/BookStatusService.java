@@ -35,4 +35,7 @@ public class BookStatusService {
     public BookStatusEntity addBookStatus(BookStatusEntity bookStatusEntity){
         return bookStatusRepository.save(bookStatusEntity);
     }
+    public BookStatusEntity updateBookStatus(String status, Long bookId, Long userId){
+        return bookStatusRepository.updateBookStatus(status, userId, bookId);
+    }
 }

@@ -37,10 +37,15 @@ public class UserRepository implements Repository<UserEntity, Long> {
     public UserEntity updateById(Long id, UserEntity userEntity){
         DataBase.getInstance().getTransaction().begin();
         UserEntity user = findByID(id);
-        user.setName(userEntity.getName());
-        user.setEmail(userEntity.getEmail());
-        user.setPassword(userEntity.getPassword());
-        user.setPictureurl(userEntity.getPictureurl());
+        if(userEntity.getName()!=null) {
+            user.setName(userEntity.getName());
+        }
+        if(userEntity.getEmail()!=null) {
+            user.setEmail(userEntity.getEmail());
+        }
+        if(userEntity.getPictureurl()!=null) {
+            user.setPictureurl(userEntity.getPictureurl());
+        }
         DataBase.getInstance().persist(user);
         DataBase.getInstance().getTransaction().commit();
         return user;

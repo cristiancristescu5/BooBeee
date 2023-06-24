@@ -3,6 +3,7 @@ package com.example.demo.BookStatus;
 import com.example.demo.DataBase;
 import com.example.demo.Repository;
 
+import java.awt.print.Book;
 import java.util.List;
 
 public class BookStatusRepository implements Repository<BookStatusEntity, Long> {
@@ -26,7 +27,15 @@ public class BookStatusRepository implements Repository<BookStatusEntity, Long> 
         query.setParameter(1, bookId).setParameter(2, userId);
         return query.getSingleResult();
     }
+    public BookStatusEntity updateBookStatus(String status, Long userId, Long bookId){
+        BookStatusEntity bookStatusEntity = findByAllCredentials(bookId, userId);
+        DataBase.getInstance().getTransaction().begin();
+        bookStatusEntity.setStatus(status);
+        DataBase.getInstance().persist(bookStatusEntity);
+        DataBase.getInstance().getTransaction().commit();
 
+        return findByAllCredentials(bookId, userId);
+    }
     @Override
     public BookStatusEntity findByID(Long aLong) {
         return null;

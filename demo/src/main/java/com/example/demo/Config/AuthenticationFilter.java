@@ -22,7 +22,9 @@ public class AuthenticationFilter implements Filter {
         var words = request.getRequestURI().split("/");
         if(request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))
                 ||(request.getMethod().equals("GET") && words[3].equals("export-as-CSV")
-                ||(request.getMethod().equals("GET") && words[3].equals("export-as-docBook")))) {
+                ||(request.getMethod().equals("GET") && words[3].equals("export-as-docBook")))
+                ||(request.getMethod().equals("PUT"))
+                ||(request.getMethod().equals("DELETE"))){
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);

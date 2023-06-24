@@ -24,7 +24,9 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
 
     @Override
     public GroupMembersEntity findByID(Long aLong) {
-        return null;
+        return DataBase.getInstance().createNamedQuery("groupMembers.findById", GroupMembersEntity.class)
+                .setParameter(1, aLong)
+                .getSingleResult();
     }
 
     @Override
@@ -35,7 +37,10 @@ public class GroupMembersRepository implements Repository<GroupMembersEntity, Lo
 
     @Override
     public void deleteByID(Long aLong) {
-
+        DataBase.getInstance().getTransaction().begin();
+        GroupMembersEntity g = findByID(aLong);
+        DataBase.getInstance().remove(g);
+        DataBase.getInstance().getTransaction().commit();
     }
 
     public void deleteByUserId(Long id){

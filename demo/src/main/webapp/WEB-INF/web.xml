@@ -17,11 +17,11 @@
         </init-param>
         <init-param>
             <param-name>cors.allowed.methods</param-name>
-            <param-value>GET,POST,HEAD,OPTIONS,PUT</param-value>
+            <param-value>GET,POST,HEAD,OPTIONS,PUT, DELETE</param-value>
         </init-param>
         <init-param>
-            <param-name>cors.allowed.headers</param-name>
-            <param-value>*</param-value>
+            <param-name>cors-allowed-headers</param-name>
+            <param-value>Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Set-Cookie</param-value>
         </init-param>
     </filter>
 
