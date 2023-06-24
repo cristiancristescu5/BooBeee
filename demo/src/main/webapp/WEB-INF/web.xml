@@ -7,34 +7,7 @@
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.example.demo.Config.AuthenticationFilter</filter-class>
     </filter>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/books/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/users/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/books</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/groups</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/groups/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/export-as-CSV</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/addBookStatus/*</url-pattern>
-    </filter-mapping>
+
     <filter>
         <filter-name>CorsFilter</filter-name>
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
@@ -51,8 +24,50 @@
             <param-value>*</param-value>
         </init-param>
     </filter>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/books/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/users/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/books</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/groups</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/groups/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/export-as-CSV</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/addBookStatus/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>
         <url-pattern>/login</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/export-as-docBook</url-pattern>
+    </filter-mapping>
+
 </web-app>

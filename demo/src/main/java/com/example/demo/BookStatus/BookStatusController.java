@@ -60,7 +60,7 @@ public class BookStatusController extends HttpServlet {
             out.close();
         }
     }
-
+    // /api/v1/addBookStatus/{bookId}
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

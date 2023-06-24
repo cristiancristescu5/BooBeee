@@ -29,40 +29,6 @@
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.swagger.core.v3</groupId>-->
-<!--            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>-->
-<!--            <version>2.2.8</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.swagger.core.v3</groupId>-->
-<!--            <artifactId>swagger-core</artifactId>-->
-<!--            <version>2.2.8</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.swagger</groupId>-->
-<!--            <artifactId>swagger-annotations</artifactId>-->
-<!--            <version>1.5.20</version>-->
-<!--        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-models -->
-<!--        <dependency>-->
-<!--            <groupId>io.swagger</groupId>-->
-<!--            <artifactId>swagger-models</artifactId>-->
-<!--            <version>2.0.0-rc2</version>-->
-<!--        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-servlet -->
-<!--        <dependency>-->
-<!--            <groupId>io.swagger</groupId>-->
-<!--            <artifactId>swagger-servlet</artifactId>-->
-<!--            <version>1.6.11</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.swagger.core.v3</groupId>-->
-<!--            <artifactId>swagger-jaxrs2</artifactId>-->
-<!--            <version>2.1.10</version>-->
-<!--        </dependency>-->
 
 
         <dependency>
@@ -164,6 +130,15 @@
             <version>8.0.0.Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.docbook/docbook-xsl -->
+        <dependency>
+            <groupId>net.sf.docbook</groupId>
+            <artifactId>docbook-xsl</artifactId>
+            <version>1.79.1</version>
+            <type>pom</type>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -184,16 +159,7 @@
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.1.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.jboss.resteasy</groupId>-->
-<!--            <artifactId>resteasy-jaxrs</artifactId>-->
-<!--            <version>4.0.0.Beta5</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.jboss.resteasy</groupId>-->
-<!--            <artifactId>resteasy-servlet-initializer</artifactId>-->
-<!--            <version>4.7.0.Final</version>-->
-<!--        </dependency>-->
+
 
 
     </dependencies>
