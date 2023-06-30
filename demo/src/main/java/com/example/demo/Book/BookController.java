@@ -105,6 +105,27 @@ public class BookController extends HttpServlet {
         PrintWriter out = resp.getWriter();
         var words = req.getRequestURI().split("/");
         System.out.println(Arrays.toString(words));
+        // api/v1/books/{bookId}/rating
+        if(words.length==6 && words[5].equals("rating")){
+            Long bookId = Long.parseLong(words[4]);
+            String responseBody;
+            float rating = 0.0f;
+            try{
+                rating = reviewService.getBookRating(bookId);
+            } catch (Exception e){
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println(e.getMessage());
+                out.close();
+                return;
+            }
+            responseBody = "{"+"\n"+"\"rating\" : \""+rating+"\""+"\n"+"}";
+            resp.setStatus(200);
+            out.println(responseBody);
+            out.close();
+            return;
+        }
+
         //get all books
         if (words.length == 4 && req.getMethod().equals("GET")) {
             List<BookEntity> books = null;

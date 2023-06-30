@@ -13,4 +13,14 @@ public class ReviewService {
     public ReviewEntity create(ReviewEntity entity)throws SQLException {
         return reviewRepository.create(entity);
     }
+    public Float getBookRating(Long bookId)throws SQLException{
+        List<ReviewEntity> reviewEntities = findReviewsByBookId(bookId);
+        float media=0.0f;
+        if(reviewEntities.size()>0) {
+            for (ReviewEntity e : reviewEntities) {
+                media += (float) e.getRating();
+            }
+        }
+        return media/reviewEntities.size();
+    }
 }
