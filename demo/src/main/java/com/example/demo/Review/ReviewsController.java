@@ -53,27 +53,6 @@ public class ReviewsController extends HttpServlet {
             return;
         }
         // /api/v1/reviews/{bookId}/{reviewId}/comments
-        if (words[6].equals("comments") && words.length==7) {
-            String id1 = words[4];
-            Long bookId = Long.parseLong(id1);
-            String id2 = words[5];
-            Long reviewId = Long.parseLong(id2);
-            String responseBody;
-            try {
-                List<CommentEntity> commentEntities = reviewCommentService.findCommentsByReviewId(reviewId);
-                responseBody = objectMapper.writeValueAsString(commentEntities);
-            } catch (Exception e) {
-                out.println(e.getMessage());
-                resp.setStatus(204);
-                out.close();
-                return;
-            }
-            resp.setStatus(200);
-            out.println(responseBody);
-            out.close();
-            return;
-        }
-        // /api/v1/reviews/user/{reviewId}
         if(words.length == 6 && words[4].equals("user")){
             Long reviewId = Long.parseLong(words[5]);
             ReviewEntity review;
@@ -102,6 +81,27 @@ public class ReviewsController extends HttpServlet {
             out.close();
             return;
         }
+        if (words[6].equals("comments") && words.length==7) {
+            String id1 = words[4];
+            Long bookId = Long.parseLong(id1);
+            String id2 = words[5];
+            Long reviewId = Long.parseLong(id2);
+            String responseBody;
+            try {
+                List<CommentEntity> commentEntities = reviewCommentService.findCommentsByReviewId(reviewId);
+                responseBody = objectMapper.writeValueAsString(commentEntities);
+            } catch (Exception e) {
+                out.println(e.getMessage());
+                resp.setStatus(204);
+                out.close();
+                return;
+            }
+            resp.setStatus(200);
+            out.println(responseBody);
+            out.close();
+            return;
+        }
+        // /api/v1/reviews/user/{reviewId}
         resp.setStatus(400);
         out.println("Bad request");
         out.close();
