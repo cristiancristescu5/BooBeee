@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,23 +58,31 @@ public class RegisterController extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        if(userService.existsUserByEmail(user.getEmail())){
-            resp.setStatus(409);
-            out.println("User with this email already exists");
-            out.close();
-            return;
+        try {
+            if(userService.existsUserByEmail(user.getEmail())){
+                resp.setStatus(409);
+                out.println("User with this email already exists");
+                out.close();
+                return;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        if(userService.existsUserByName(user.getName())){
-            resp.setStatus(409);
-            out.println("User with this username already exists");
-            out.close();
-            return;
+        try {
+            if(userService.existsUserByName(user.getName())){
+                resp.setStatus(409);
+                out.println("User with this username already exists");
+                out.close();
+                return;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         try {
             userService.addUser(user);
             out.println(objectMapper.writeValueAsString(user));
             out.close();
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException | SQLException e){
             resp.setStatus(400);
             out.println(e.getMessage());
             out.close();

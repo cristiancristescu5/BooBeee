@@ -5,6 +5,7 @@ import com.example.demo.BookStatus.BooksWithStatuses;
 import com.example.demo.RequestBodyParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/users", "/users/*"})
@@ -41,14 +44,15 @@ public class UserController extends HttpServlet {
                 out.println(e.getMessage());
                 out.close();
                 return;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
             out.println(userString);
             out.close();
             return;
-
         }
 
-        // api/v1/users/{email}/books --> aduce lista de carti ale user ului cu tot cu statusurile sale
+        // api/v1/users/books --> aduce lista de carti ale user ului cu tot cu statusurile sale
         if (words.length == 5 && words[4].equals("books") && request.getMethod().equals("GET")) {
             String email = request.getAttribute("email").toString();
             String responseBody;
@@ -87,7 +91,12 @@ public class UserController extends HttpServlet {
             String id = req.getRequestURI().split("/")[4];
             Long userId = Long.parseLong(id);
             UserEntity user = objectMapper.readValue(RequestBodyParser.parseRequest(req), UserEntity.class);
-            UserEntity userEntity = userService.updateUser(userId, user);
+            UserEntity userEntity;
+            try {
+                userEntity= userService.updateUser(userId, user);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String responseBody = objectMapper.writeValueAsString(userEntity);
             out.println(responseBody);
             out.close();
@@ -107,6 +116,7 @@ public class UserController extends HttpServlet {
             BufferedReader buff = request.getReader();
             StringBuilder body = new StringBuilder();
             String line;
+            PrintWriter out = response.getWriter();
             while ((line = buff.readLine()) != null) {
                 body.append(line);
             }
@@ -114,8 +124,16 @@ public class UserController extends HttpServlet {
 
             String reqBody = body.toString();
             UserEntity user = objectMapper.readValue(reqBody, UserEntity.class);
-            UserEntity userEntity = userService.addUser(user);
-            PrintWriter out = response.getWriter();
+            UserEntity userEntity;
+            try {
+                userEntity = userService.addUser(user);
+            }catch (SQLException e){
+                e.printStackTrace();
+                response.setStatus(400);
+                out.println("Bad Request");
+                out.close();
+                return;
+            }
             String responseBody = objectMapper.writeValueAsString(userEntity);
             out.println(responseBody);
             out.close();
@@ -135,7 +153,15 @@ public class UserController extends HttpServlet {
             PrintWriter out = resp.getWriter();
             String id = req.getRequestURI().split("/")[4];
             Long userId = Long.parseLong(id);
-            userService.deleteUserById(userId);
+            try {
+                userService.deleteUserById(userId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println("Bad request");
+                out.close();
+                return;
+            }
             out.println("User deleted");
             out.close();
         } else {

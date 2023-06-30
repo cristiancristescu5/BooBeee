@@ -6,39 +6,33 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Entity
-@Table(name = "review", schema = "public", catalog = "BooDB")
-@NamedQuery(name = "reviews.findById", query = "select a from ReviewEntity a where a.id = ?1 ")
-@NamedQuery(name = "reviews.findAll", query = "select a from ReviewEntity a")
-@NamedQuery(name = "reviews.findByBook", query = "select a from ReviewEntity a where a.bookId = ?1")
 public class ReviewEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
     private long id;
-    @Basic
-    @Column(name = "rating", nullable = true)
     private Integer rating;
-    @Basic
-    @Column(name = "description", nullable = true, length = -1)
     private String description;
-    @Basic
-    @Column(name = "createdat", nullable = true)
     private Timestamp createdat;
-    @Basic
-    @Column(name = "user_id", nullable = true)
     private Long userId;
-    @Basic
-    @Column(name = "book_id", nullable = true)
     private Long bookId;
     public ReviewEntity(String description, Integer rating){
         this.rating = rating;
         this.description = description;
         this.createdat = new Timestamp(System.currentTimeMillis());
     }
+
+    public ReviewEntity(long id, Integer rating, String description, Timestamp createdat, Long userId, Long bookId) {
+        this.id = id;
+        this.rating = rating;
+        this.description = description;
+        this.createdat = createdat;
+        this.userId = userId;
+        this.bookId = bookId;
+    }
+
     public ReviewEntity(){
         this.createdat = new Timestamp(System.currentTimeMillis());
     }
+
+
     public long getId() {
         return id;
     }

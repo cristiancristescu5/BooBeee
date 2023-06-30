@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 
 @WebServlet(urlPatterns = {"/login"})
@@ -86,8 +87,6 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        resp.setHeader("Access-Control-Expose-Headers", "Authorization");
-
         LoginMessage login = getMessage(req);
         resp.setContentType("application/json");
         resp.setStatus(201);
@@ -96,13 +95,22 @@ public class LoginController extends HttpServlet {
         String email = login.getEmail();
         String password = login.getPassword();
         PrintWriter out = resp.getWriter();
-        if (!userService.existsUserByEmail(email)) {
-            resp.setStatus(404);
-            out.println("User with this email does not exist");
-            out.close();
-            return;
+        try {
+            if (!userService.existsUserByEmail(email)) {
+                resp.setStatus(404);
+                out.println("User with this email does not exist");
+                out.close();
+                return;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        UserEntity user = userService.findByEmail(email);
+        UserEntity user = null;
+        try {
+            user = userService.findByEmail(email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         String userPassword;
         try {
             userPassword = PasswordUtils.decryptString(user.getPassword());
@@ -124,8 +132,7 @@ public class LoginController extends HttpServlet {
             throw new RuntimeException(e);
         }
         resp.setHeader("Authorization", "Bearer " + token);
-//        resp.setHeader("withCredentials", "true");
-        Cookie cookie = new Cookie("JWTToken", token);
+        Cookie cookie = new Cookie("sessionId", token);
         cookie.setPath("/");
         cookie.setDomain("localhost");
         cookie.setMaxAge((int)System.currentTimeMillis()+864_000);

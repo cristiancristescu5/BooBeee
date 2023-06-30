@@ -2,65 +2,181 @@ package com.example.demo.GroupMembers;
 
 import com.example.demo.DataBase;
 import com.example.demo.Group.GroupEntity;
-import com.example.demo.Repository;
+import com.example.demo.Group.GroupRepository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class GroupMembersRepository implements Repository<GroupMembersEntity, Long>{
-
-    public List<GroupMembersEntity> findByUserId(Long aLong){
-        return DataBase.getInstance().createNamedQuery("groupMembers.findByUserId", GroupMembersEntity.class)
-                .setParameter(1, aLong)
-                .getResultList();
-    }
-    public List<GroupMembersEntity> findByGroupId(Long aLong){
-        return DataBase.getInstance().createNamedQuery("groupMembers.findByGroupId", GroupMembersEntity.class)
-                .setParameter(1, aLong).getResultList();
-    }
-
-    public GroupMembersEntity addGroupMember(Long groupId, Long userId){
-        return save(new GroupMembersEntity(userId, groupId));
-    }
-
-    @Override
-    public GroupMembersEntity findByID(Long aLong) {
-        return DataBase.getInstance().createNamedQuery("groupMembers.findById", GroupMembersEntity.class)
-                .setParameter(1, aLong)
-                .getSingleResult();
+public class GroupMembersRepository {
+    private final GroupRepository groupRepository = new GroupRepository();
+    public List<GroupMembersEntity> findByUserId(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        List<GroupMembersEntity> groupMembersEntities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from group_members where user_id = ? "
+        )) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
+            }
+            return groupMembersEntities;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    @Override
-    public List<GroupMembersEntity> findAll() {
-        return DataBase.getInstance().createNamedQuery("groupMembers.findAll", GroupMembersEntity.class)
-                .getResultList();
+    public List<GroupMembersEntity> findByGroupId(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        List<GroupMembersEntity> groupMembersEntities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from group_members where group_id = ? "
+        )) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
+            }
+            return groupMembersEntities;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    @Override
-    public void deleteByID(Long aLong) {
-        DataBase.getInstance().getTransaction().begin();
-        GroupMembersEntity g = findByID(aLong);
-        DataBase.getInstance().remove(g);
-        DataBase.getInstance().getTransaction().commit();
+    public GroupMembersEntity addGroupMember(Long groupId, Long userId) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "insert into group_members(user_id, group_id) values(?, ?)"
+        )) {
+            statement.setLong(1, userId);
+            statement.setLong(2, groupId);
+            statement.executeUpdate();
+            return findByUserIdAndGroupId(userId, groupId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    public void deleteByUserId(Long id){
-        GroupMembersEntity g1 = DataBase.getInstance().find(GroupMembersEntity.class, id);
-        DataBase.getInstance().getTransaction().begin();
-        DataBase.getInstance().remove(g1);
-        DataBase.getInstance().getTransaction().commit();
+
+    public GroupMembersEntity findByID(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from group_members where id = ?"
+        )) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    public GroupEntity findIdByGroupName(String name){
-        return DataBase.getInstance().createNamedQuery("groups.findIdByName", GroupEntity.class)
-                .setParameter(1, name)
-                .getSingleResult();
+
+    public List<GroupMembersEntity> findAll() throws SQLException {
+        List<GroupMembersEntity> groupMembersEntities = new ArrayList<>();
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from group_members"
+        )) {
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
+            }
+            return groupMembersEntities;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
-    public GroupMembersEntity findByUserIdAndGroupId(Long userId, Long groupId){
-        System.out.println(userId);
-        System.out.println(groupId);
-        return DataBase.getInstance().createNamedQuery("groupMembers.findByGroupIdAndUserId", GroupMembersEntity.class)
-                .setParameter(1, userId)
-                .setParameter(2, groupId)
-                .getSingleResult();
+
+
+    public void deleteByID(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "delete from group_members where id = ?"
+        )) {
+            statement.setLong(1, aLong);
+            statement.executeUpdate();
+            connection.commit();
+            connection.close();
+        } catch (SQLException e) {
+            connection.rollback();
+            e.printStackTrace();
+            connection.close();
+        }
     }
+
+    public void deleteByUserId(Long id) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "delete from group_members where user_id = ?"
+        )) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.rollback();
+            connection.close();
+        }
+    }
+
+    public GroupEntity findIdByGroupName(String name) throws SQLException{
+        Connection connection = DataBase.getConnection();
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select * from group_ where name = ?"
+        )){
+            statement.setString(1, name);
+            var rs = statement.executeQuery();
+            return rs.next() ? groupRepository.findByID(rs.getLong(1)) : null;
+        }catch (SQLException e){
+            connection.close();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public GroupMembersEntity findByUserIdAndGroupId(Long userId, Long groupId) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select * from group_members where user_id = ? and group_id = ?"
+        )){
+            statement.setLong(1, userId);
+            statement.setLong(2, groupId);
+            var rs = statement.executeQuery();
+            return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
+        }catch (SQLException e){
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
+    }
+
+    public GroupMembersEntity create(GroupMembersEntity groupMembers) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO group_members (user_id, group_id) VALUES (?, ?)")) {
+            preparedStatement.setLong(1, groupMembers.getUserId());
+            preparedStatement.setLong(2, groupMembers.getGroupId());
+            preparedStatement.executeUpdate();
+            connection.close();
+            return groupMembers;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

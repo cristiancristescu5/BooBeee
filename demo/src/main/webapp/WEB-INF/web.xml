@@ -24,16 +24,16 @@
             <param-value>true</param-value>
         </init-param>
         <init-param>
-            <param-name>cors-allowed-headers</param-name>
+            <param-name>cors.allowed.headers</param-name>
             <param-value>Origin, Accept, X-Requested-With,
-                Content-Type, Access-Control-Request-Method,
-                Access-Control-Request-Headers, Set-Cookie,
-                Access-Control-Allow-Credentials, Authorization</param-value>
+                Content-Type, Set-Cookie, Access-Control-Request-Method,
+                Access-Control-Request-Headers, Authorization</param-value>
         </init-param>
-<!--        <init-param>-->
-<!--            <param-name>withCredentials</param-name>-->
-<!--            <param-value>true</param-value>-->
-<!--        </init-param>-->
+
+        <init-param>
+            <param-name>cors.exposed.headers</param-name>
+            <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials,Access-Control-Allow-Methods</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
@@ -73,7 +73,7 @@
 
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>
-        <url-pattern>*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

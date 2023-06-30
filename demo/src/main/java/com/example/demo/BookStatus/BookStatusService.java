@@ -5,6 +5,7 @@ import com.example.demo.Book.BookRepository;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,8 @@ public class BookStatusService {
     private final BookStatusRepository bookStatusRepository = new BookStatusRepository();
     private final BookRepository bookRepository = new BookRepository();
     private final UserRepository userRepository = new UserRepository();
-    public List<BooksWithStatuses> getAllBooks(String email){
+
+    public List<BooksWithStatuses> getAllBooks(String email) throws SQLException {
         List<BooksWithStatuses> books = new ArrayList<>();
         UserEntity user = userRepository.findByEmail(email);
         List<BookStatusEntity> bookStatusEntities = bookStatusRepository.findByUserId(user.getId());
@@ -28,14 +30,15 @@ public class BookStatusService {
         }
         return books;
     }
-    public BookStatusEntity getBookStatusByBookIdAndStatusAndUserEmail(Long bookId, String email){
+    public BookStatusEntity getBookStatusByBookIdAndStatusAndUserEmail(Long bookId, String email) throws SQLException{
         UserEntity user = userRepository.findByEmail(email);
         return bookStatusRepository.findByAllCredentials(bookId, user.getId());
     }
-    public BookStatusEntity addBookStatus(BookStatusEntity bookStatusEntity){
-        return bookStatusRepository.save(bookStatusEntity);
+
+    public BookStatusEntity addBookStatus(BookStatusEntity bookStatusEntity) throws SQLException{
+        return bookStatusRepository.create(bookStatusEntity);
     }
-    public BookStatusEntity updateBookStatus(String status, Long bookId, Long userId){
+    public BookStatusEntity updateBookStatus(String status, Long bookId, Long userId) throws SQLException{
         return bookStatusRepository.updateBookStatus(status, userId, bookId);
     }
 }

@@ -5,32 +5,25 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 
-@Entity
-@Table(name = "author", schema = "public", catalog = "BooDB")
-@NamedQuery(name = "author.findById", query = "select a from AuthorEntity a where a.id = ?1 ")
-@NamedQuery(name = "author.findAll", query = "select a from AuthorEntity  a")
 public class AuthorEntity implements Serializable {
-    @Id
-    @Column(name = "id", nullable = false)
+
     private long id;
-    @Basic
-    @Column(name = "birthday", nullable = true)
     private Date birthday;
-    @Basic
-    @Column(name = "deathday", nullable = true)
     private Date deathday;
-    @Basic
-    @Column(name = "name", nullable = true, length = -1)
     private String name;
-    @Basic
-    @Column(name = "description", nullable = true, length = -1)
     private String description;
-    @Basic
-    @Column(name = "pictureurl", nullable = true, length = -1)
     private String pictureurl;
-    @Basic
-    @Column(name = "websiteurl", nullable = true, length = -1)
     private String websiteurl;
+
+    public AuthorEntity(long id, Date birthday, Date deathday, String name, String description, String pictureurl, String websiteurl) {
+        this.id = id;
+        this.birthday = birthday;
+        this.deathday = deathday;
+        this.name = name;
+        this.description = description;
+        this.pictureurl = pictureurl;
+        this.websiteurl = websiteurl;
+    }
 
     public long getId() {
         return id;

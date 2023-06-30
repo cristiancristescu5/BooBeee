@@ -5,6 +5,7 @@ import com.example.demo.Group.GroupRepository;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +14,13 @@ public class GroupMembersService {
     private final GroupRepository groupRepository = new GroupRepository();
     private final UserRepository userRepository = new UserRepository();
 
-    public GroupMembersEntity addMember(Long groupId, Long userId) {
+    public GroupMembersEntity addMember(Long groupId, Long userId) throws SQLException {
         GroupEntity group = groupRepository.findByID(groupId);
         groupRepository.updateMembersCount(group.getName());
-        return groupMembersRepository.save(new GroupMembersEntity(userId, groupId));
+        return groupMembersRepository.create(new GroupMembersEntity(userId, groupId));
     }
 
-    public List<GroupMembers> findGroupMembers(String name) {
+    public List<GroupMembers> findGroupMembers(String name) throws SQLException {
         List<GroupMembers> groupMembers = new ArrayList<>();
         GroupEntity group = groupRepository.findByName(name);
         List<GroupMembersEntity> groupMembersEntities = groupMembersRepository.findByGroupId(group.getId());
@@ -29,12 +30,14 @@ public class GroupMembersService {
         }
         return groupMembers;
     }
-    public GroupMembersEntity findMemberInAGroup(Long userId, Long groupId){
-        System.out.println(userId );
+
+    public GroupMembersEntity findMemberInAGroup(Long userId, Long groupId) throws SQLException {
+        System.out.println(userId);
         System.out.println(groupId);
         return groupMembersRepository.findByUserIdAndGroupId(userId, groupId);
     }
-    public void deleteMember(Long id){
+
+    public void deleteMember(Long id) throws SQLException {
         GroupMembersEntity groupMembersEntity = groupMembersRepository.findByID(id);
         groupRepository.updateMembersCountMinus(groupRepository.findByID(groupMembersEntity.getGroupId()).getName());
         groupMembersRepository.deleteByID(groupMembersEntity.getId());

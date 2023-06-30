@@ -4,30 +4,22 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "group_members", schema = "public", catalog = "BooDB")
-@NamedQuery(name = "groupMembers.findByUserId", query = "select a from GroupMembersEntity a where a.userId = ?1 ")
-@NamedQuery(name = "groupMembers.findByGroupId", query = "select a from GroupMembersEntity a where a.groupId = ?1")
-@NamedQuery(name = "groupMembers.findAll", query = "select a from GroupMembersEntity  a")
-@NamedQuery(name = "groupMembers.findByGroupIdAndUserId", query = "select a from GroupMembersEntity a where a.userId = ?1 and a.groupId =?2")
-@NamedQuery(name = "groupMembers.findById", query = "select a from GroupMembersEntity a where a.id = ?1")
 public class GroupMembersEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
-    private long id;
-    @Basic
-    @Column(name = "user_id", nullable = true)
+    private Long id;
     private Long userId;
-    @Basic
-    @Column(name = "group_id", nullable = true)
     private Long groupId;
 
-    public long getId() {
+    public GroupMembersEntity(Long id, Long userId, Long groupId) {
+        this.id = id;
+        this.userId = userId;
+        this.groupId = groupId;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

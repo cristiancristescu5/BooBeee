@@ -1,37 +1,93 @@
 package com.example.demo.Comment;
 
 import com.example.demo.DataBase;
-import com.example.demo.Repository;
 
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class CommentRepository implements Repository<CommentEntity, Long>{
-    @Override
-    public void deleteByID(Long aLong) {
-        DataBase.getInstance().getTransaction().begin();
-        CommentEntity c = findByID(aLong);
-        DataBase.getInstance().remove(c);
-        DataBase.getInstance().getTransaction().commit();
+public class CommentRepository {
+
+    public void deleteByID(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "delete from comment_ where id = ?")) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeUpdate();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public CommentEntity findByID(Long aLong) {
-        return DataBase.getInstance().createNamedQuery("comment.findById", CommentEntity.class)
-                .setParameter(1, aLong)
-                .getSingleResult();
+
+    public CommentEntity findByID(Long aLong) throws SQLException{
+        Connection connection = DataBase.getConnection();
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "select * from comment_ where id = '" + aLong + "'")) {
+            return resultSet.next() ? new CommentEntity(resultSet.getLong(1),
+            resultSet.getString(2),
+            resultSet.getTimestamp(3)): null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    @Override
-    public List<CommentEntity> findAll() {
-        return DataBase.getInstance().createNamedQuery("comment.findAll", CommentEntity.class)
-                .getResultList();
+
+    public List<CommentEntity> findAll() throws SQLException {
+        Connection connection = DataBase.getConnection();
+        List<CommentEntity> comments = new ArrayList<>();
+        try (
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(
+                        "select * from comment_"
+                )) {
+            while (resultSet.next()) {
+                comments.add(new CommentEntity(resultSet.getLong(1),
+                        resultSet.getString(2),
+                        resultSet.getTimestamp(3)));
+            }
+            connection.close();
+            return comments;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connection.rollback();
+            return null;
+        }
     }
-    public CommentEntity updateById(Long id, CommentEntity commentEntity){
-        DataBase.getInstance().getTransaction().begin();
-        CommentEntity comment = findByID(id);
-        comment.setDescription(commentEntity.getDescription());
-        DataBase.getInstance().persist(comment);
-        DataBase.getInstance().getTransaction().commit();
-        return comment;
+    public CommentEntity updateById(Long id, CommentEntity commentEntity) throws SQLException{
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "update comment_ set description=? where id = ?")) {
+            preparedStatement.setString(1, commentEntity.getDescription());
+            preparedStatement.setLong(2, id);
+            preparedStatement.executeUpdate();
+            connection.close();
+            return commentEntity;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            connection.rollback();
+            return null;
+        }
     }
+
+    public CommentEntity create(CommentEntity comment) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO comment_ (description, createdat) VALUES (?, ?)")) {
+            preparedStatement.setString(1, comment.getDescription());
+            preparedStatement.setTimestamp(2, comment.getCreatedat());
+            preparedStatement.executeUpdate();
+            connection.close();
+            return comment;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

@@ -4,38 +4,25 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "book_status", schema = "public", catalog = "BooDB")
-@NamedQueries({
-        @NamedQuery(name = "book_status.findByBookId",
-                query = "select b from BookStatusEntity b where b.bookId = ?1"),
-        @NamedQuery(name = "book_status.findByUserId",
-                query = "select b from BookStatusEntity b where b.userId = ?1 "),
-        @NamedQuery(name = "book_status.findByUserIdAndStatus",
-                query = "select e from BookStatusEntity e where e.userId = ?1 and e.status = ?2"),
-        @NamedQuery(name = "book_status.findByBookIdAndBookId",
-                query = "select e from BookStatusEntity e where e.bookId = ?1 and e.userId = ?2")
-})
 public class BookStatusEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
     private long id;
-    @Basic
-    @Column(name = "book_id", nullable = true)
     private Long bookId;
-    @Basic
-    @Column(name = "user_id", nullable = true)
     private Long userId;
-    @Basic
-    @Column(name = "status", nullable = false, length = -1)
     private String status;
 
-    public BookStatusEntity(Long id, Long bookId, String bookStatus) {
-        this.userId = id;
+    public BookStatusEntity(Long userId, Long bookId, String bookStatus) {
+        this.userId = userId;
         this.bookId = bookId;
         this.status = bookStatus;
     }
+
+    public BookStatusEntity(long id, Long bookId, Long userId, String status) {
+        this.id = id;
+        this.bookId = bookId;
+        this.userId = userId;
+        this.status = status;
+    }
+
     public BookStatusEntity(){}
 
     public long getId() {

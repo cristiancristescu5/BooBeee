@@ -29,6 +29,12 @@ public class CommentEntity implements Serializable {
         this.createdat = new Timestamp(System.currentTimeMillis());
     }
 
+    public CommentEntity(Long id,String description, Timestamp t){
+        this.id = id;
+        this.description = description;
+        this.createdat = t;
+    }
+
     public CommentEntity(){
         this.createdat = new Timestamp(System.currentTimeMillis());
     }

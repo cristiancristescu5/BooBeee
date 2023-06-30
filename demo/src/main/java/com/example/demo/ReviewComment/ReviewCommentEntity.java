@@ -4,32 +4,25 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "review_comment", schema = "public", catalog = "BooDB")
-@NamedQuery(name = "reviewComments.findByUserId", query = "select a from ReviewCommentEntity a where a.userId = ?1 ")
-@NamedQuery(name = "reviewComments.findByReviewId", query = "select a from ReviewCommentEntity a where a.reviewId = ?1 ")
-@NamedQuery(name = "reviewComments.findAll", query = "select a from ReviewCommentEntity a")
-@NamedQuery(name = "reviewComments.findByIDs", query = "select a from ReviewCommentEntity a where a.userId =?1 and a.reviewId = ?2 and a.commentId = ?3")
 public class ReviewCommentEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
-    private long id;
-    @Basic
-    @Column(name = "user_id", nullable = true)
+    private Long id;
     private Long userId;
-    @Basic
-    @Column(name = "review_id", nullable = true)
     private Long reviewId;
-    @Basic
-    @Column(name = "comment_id", nullable = true)
     private Long commentId;
 
-    public long getId() {
+    public ReviewCommentEntity(Long id, Long userId, Long reviewId, Long commentId) {
+        this.id = id;
+        this.userId = userId;
+        this.reviewId = reviewId;
+        this.commentId = commentId;
+    }
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

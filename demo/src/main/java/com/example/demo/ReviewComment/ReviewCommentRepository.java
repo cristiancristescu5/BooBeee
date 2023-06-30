@@ -1,47 +1,83 @@
 package com.example.demo.ReviewComment;
 
 import com.example.demo.DataBase;
-import com.example.demo.Repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewCommentRepository implements Repository<ReviewCommentEntity, Long> {
-    public ReviewCommentEntity findByUserId(Long aLong) {
-        return DataBase.getInstance().createNamedQuery("reviewComments.findByUserId", ReviewCommentEntity.class)
-                .setParameter(1, aLong)
-                .getSingleResult();
-    }
-    public ReviewCommentEntity findByReviewId(Long aLong) {
-        return DataBase.getInstance().createNamedQuery("reviewComments.findByReviewId", ReviewCommentEntity.class)
-                .setParameter(1, aLong)
-                .getSingleResult();
-    }
-
-    @Override
-    public ReviewCommentEntity findByID(Long aLong) {
-        return null;
-    }
-
-    @Override
-    public List<ReviewCommentEntity> findAll() {
-        var query = DataBase.getInstance().createNamedQuery("reviewComments.findAll", ReviewCommentEntity.class);
-        return query.getResultList();
+public class ReviewCommentRepository {
+    public ReviewCommentEntity findByUserId(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from review_comment where user_id = ?"
+        )) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            return rs.next() ? new ReviewCommentEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4)) : null;
+        }catch(SQLException e){
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
     }
 
-    @Override
-    public void deleteByID(Long aLong) {
+    public List<ReviewCommentEntity> findByReviewId(Long aLong) throws SQLException {
+        List<ReviewCommentEntity> reviewCommentEntities = new ArrayList<>();
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from review_comment where review_id = ?"
+        )) {
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                reviewCommentEntities.add(new ReviewCommentEntity(
+                        rs.getLong(1),
+                        rs.getLong(2),
+                        rs.getLong(3),
+                        rs.getLong(4)
+                ));
+            }
+            return reviewCommentEntities;
+        }
+    }
+    public List<ReviewCommentEntity> findAll() throws SQLException {
+        Connection connection = DataBase.getConnection();
+        List<ReviewCommentEntity> reviewCommentEntities = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "select * from review_comment"
+        )) {
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                reviewCommentEntities.add(new ReviewCommentEntity(
+                        rs.getLong(1),
+                        rs.getLong(2),
+                        rs.getLong(3),
+                        rs.getLong(4)
+                ));
+            }
+            return reviewCommentEntities;
+        }
 
     }
 
-//    public ReviewCommentEntity findByIDS(ReviewCommentEntityPK r) {
-//        return DataBase.getInstance().find(ReviewCommentEntity.class, r);
-//    }
 
-//    public void deleteByIdS(ReviewCommentEntityPK r) {
-//        DataBase.getInstance().getTransaction().begin();
-//        ReviewCommentEntity r1 = findByIDS(r);
-//        DataBase.getInstance().remove(r1);
-//        DataBase.getInstance().getTransaction().commit();
-//
-//    }
+    public ReviewCommentEntity create(ReviewCommentEntity reviewComment) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO review_comment (user_id, review_id, comment_id) VALUES (?, ?, ?)")) {
+            preparedStatement.setLong(1, reviewComment.getUserId());
+            preparedStatement.setLong(2, reviewComment.getReviewId());
+            preparedStatement.setLong(3, reviewComment.getCommentId());
+            preparedStatement.executeUpdate();
+            connection.close();
+            return reviewComment;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

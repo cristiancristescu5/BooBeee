@@ -10,6 +10,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
+
 @WebFilter
 public class AuthenticationFilter implements Filter {
     private static final String SECRET_KEY = "wsdefrgthyjutrefwderetrhgnjmk12w3e4r5t6y7u8i9o0p";
@@ -58,6 +60,8 @@ public class AuthenticationFilter implements Filter {
             var user = userService.findByEmail(email);
         }catch (NoResultException e){
             return false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }

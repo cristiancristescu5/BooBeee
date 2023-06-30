@@ -4,30 +4,29 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "book", schema = "public", catalog = "BooDB")
-@NamedQueries({
-        @NamedQuery(name = "book.findById", query = "select b from BookEntity b where b.id = ?1"),
-        @NamedQuery(name = "book.findAll", query = "select b from BookEntity b")
-}
-)
+
 public class BookEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
+
     private long id;
-    @Basic
-    @Column(name = "title", nullable = false, length = -1)
     private String title;
-    @Basic
-    @Column(name = "isbn", nullable = false, length = -1)
     private String isbn;
-    @Basic
-    @Column(name = "description", nullable = true, length = -1)
     private String description;
-    @Basic
-    @Column(name = "picture", nullable = true, length = -1)
     private String picture;
+
+    public BookEntity(long id, String title, String isbn, String description, String picture) {
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.description = description;
+        this.picture = picture;
+    }
+
+    public BookEntity(String title, String isbn, String description, String picture) {
+        this.title = title;
+        this.isbn = isbn;
+        this.description = description;
+        this.picture = picture;
+    }
 
     public long getId() {
         return id;

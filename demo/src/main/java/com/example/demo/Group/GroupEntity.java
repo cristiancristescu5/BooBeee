@@ -4,13 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-@Entity
-@Table(name = "group_", schema = "public", catalog = "BooDB")
-@NamedQuery(name = "groups.findById", query = "select a from GroupEntity a where a.id = ?1 ")
-@NamedQuery(name = "groups.findAll", query = "select a from GroupEntity a")
-@NamedQuery(name = "groups.findByName", query = "select  a from GroupEntity a where a.name = ?1 ")
-@NamedQuery(name = "groups.findIdByName", query = "select a from GroupEntity a where a.name = ?1")
 public class GroupEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -39,6 +32,14 @@ public class GroupEntity implements Serializable {
         this.description = description;
         this.createdat = new Timestamp(System.currentTimeMillis());
         this.membersCount = 0;
+    }
+
+    public GroupEntity(long id, String name, String description, Timestamp createdat, Integer membersCount) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.createdat = createdat;
+        this.membersCount = membersCount;
     }
 
     public long getId() {

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 @WebServlet(urlPatterns = "/addBookStatus/*")
 public class BookStatusController extends HttpServlet {
@@ -28,7 +29,12 @@ public class BookStatusController extends HttpServlet {
         resp.setStatus(201);
         var words = req.getRequestURI().split("/");
         String responseBody;
-        UserEntity user = userService.findByEmail(email);
+        UserEntity user = null;
+        try {
+            user = userService.findByEmail(email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         resp.setContentType("application/json");
         Long bookId = Long.parseLong(words[4].trim());
         String bookStatus = words[5];
@@ -47,13 +53,20 @@ public class BookStatusController extends HttpServlet {
             out.println("Book already exists");
             out.close();
         } catch (NoResultException e) {
-            BookStatusEntity bookStatusEntity = bookStatusService.addBookStatus(new BookStatusEntity(user.getId(), bookId, bookStatus));
+            BookStatusEntity bookStatusEntity = null;
+            try {
+                bookStatusEntity = bookStatusService.addBookStatus(new BookStatusEntity(user.getId(), bookId, bookStatus));
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             responseBody = objectMapper.writeValueAsString(bookStatusEntity);
             out.println(responseBody);
             System.out.println(responseBody);
             String finalResponseBody = resp.getOutputStream().toString();
             System.out.println(finalResponseBody);
             out.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     // /api/v1/addBookStatus/{bookId}/{status}

@@ -4,25 +4,17 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "book_authors", schema = "public", catalog = "BooDB")
-@NamedQueries({
-        @NamedQuery(name = "book_authors.findByBookId",
-                query = "select b from BookAuthorsEntity b where b.bookId = ?1"),
-        @NamedQuery(name = "book_authors.findByAuthorID",
-                query = "select b from BookAuthorsEntity b where b.authorId = ?1")
-})
 public class BookAuthorsEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
     private long id;
-    @Basic
-    @Column(name = "book_id", nullable = true)
     private Long bookId;
-    @Basic
-    @Column(name = "author_id", nullable = true)
     private Long authorId;
+
+    public BookAuthorsEntity(long id, Long bookId, Long authorId) {
+        this.id = id;
+        this.bookId = bookId;
+        this.authorId = authorId;
+    }
+    public BookAuthorsEntity(){}
 
     public long getId() {
         return id;

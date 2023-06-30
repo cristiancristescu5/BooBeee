@@ -6,6 +6,7 @@ import com.example.demo.RequestBodyParser;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.persistence.NoResultException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,10 +14,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.spec.ECField;
+import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet(urlPatterns = {"/groups", "/groups/*"})
 public class GroupController extends HttpServlet {
@@ -44,14 +45,33 @@ public class GroupController extends HttpServlet {
             boolean found = true;
             try {
                 GroupEntity existingGroup = groupService.findByName(groupEntity.getName());
-            } catch (NoResultException e) {
+            } catch (NoResultException | SQLException e) {
                 found = false;
+                e.printStackTrace();
             }
             if (!found) {
-                Long userId = userService.findByEmail(email).getId();
+                Long userId = null;
+                try {
+                    userId = userService.findByEmail(email).getId();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 groupEntity.setMembersCount(groupEntity.getMembersCount() + 1);
-                GroupEntity group = groupService.addGroup(groupEntity);
-                groupMembersService.addMember(groupEntity.getId(), userId);
+                GroupEntity group = null;
+                try {
+                    group = groupService.addGroup(groupEntity);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    groupMembersService.addMember(groupEntity.getId(), userId);
+                }catch (SQLException e){
+                    e.printStackTrace();
+                    resp.setStatus(400);
+                    out.println("Bad Request");
+                    out.close();
+                    return;
+                }
                 out.println(objectMapper.writeValueAsString(group));
                 out.close();
                 return;
@@ -67,11 +87,11 @@ public class GroupController extends HttpServlet {
             try {
                 GroupEntity group = groupService.findByName(groupName);
                 groupId = group.getId();
-            } catch (NoResultException e) {
+            } catch (NoResultException | SQLException e) {
+                resp.setStatus(400);
                 out.println("The group " + groupName + " does not exist");
                 out.close();
                 System.out.println("pica grup");
-                resp.setStatus(400);
                 return;
             }
             Long userId;
@@ -85,23 +105,35 @@ public class GroupController extends HttpServlet {
                 out.close();
                 resp.setStatus(400);
                 return;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
             try {
                 System.out.println("verific user in grup");
                 groupMembersService.findMemberInAGroup(userId, groupId);//problema
-
                 resp.setStatus(400);
                 out.println("You are already in this group");
                 out.close();
                 return;
             } catch (NoResultException e) {
                 System.out.println("nu exista user in grup");
-                GroupMembersEntity groupMembersEntity = groupMembersService.addMember(groupId, userId);
+                GroupMembersEntity groupMembersEntity;
+                try {
+                    groupMembersEntity = groupMembersService.addMember(groupId, userId);
+                }catch (SQLException f){
+                    f.printStackTrace();
+                    resp.setStatus(400);
+                    out.println("Bad Request");
+                    out.close();
+                    return;
+                }
                 responseBody = objectMapper.writeValueAsString(groupMembersEntity);
                 resp.setStatus(201);
                 out.println(responseBody);
                 out.close();
                 return;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
 
         }
@@ -132,6 +164,33 @@ public class GroupController extends HttpServlet {
             out.close();
             return;
         }
+        // _ api v1 groups
+        if (words.length == 4) {
+            List<GroupEntity> groups;
+            try {
+               groups = groupService.getAllGroups();
+            }catch (SQLException e){
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println("Bad Request");
+                out.close();
+                return;
+            }
+            String responseBody;
+            try {
+                responseBody = objectMapper.writeValueAsString(groups);
+            }catch (Exception e){
+                out.println("Bad request");
+                out.close();
+                resp.setStatus(400);
+                return;
+            }
+            resp.setStatus(200);
+            out.println(responseBody);
+            out.close();
+            return;
+        }
+
         out.println("Bad request");
         out.close();
         resp.setStatus(400);
@@ -143,8 +202,6 @@ public class GroupController extends HttpServlet {
 
     }
 
-    // /groups/{groupName}/groupMembers
-    // _ api v1 groups groupName
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("test/plain");
@@ -153,7 +210,12 @@ public class GroupController extends HttpServlet {
         String email = req.getAttribute("email").toString();
         var words = req.getRequestURI().split("/");
         String groupName = words[4];
-        UserEntity entity = userService.findByEmail(email);
+        UserEntity entity = null;
+        try {
+            entity = userService.findByEmail(email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         GroupMembersEntity groupMembersEntity;
         GroupEntity groupEntity;
         try {

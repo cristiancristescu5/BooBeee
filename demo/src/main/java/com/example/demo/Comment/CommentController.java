@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/comments", "/comments/*"})
@@ -35,13 +36,20 @@ public class CommentController extends HttpServlet {
                 out.println(e.getMessage());
                 out.close();
                 return;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
             out.println(commentString);
             out.close();
             return;
         }
         if (req.getRequestURI().split("/").length == 4 && req.getMethod().equals("GET")) {
-            List<CommentEntity> commentEntityList = commentService.getAllComments();
+            List<CommentEntity> commentEntityList = null;
+            try {
+                commentEntityList = commentService.getAllComments();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String responseBody = objectMapper.writeValueAsString(commentEntityList);
             out.println(responseBody);
             out.close();
@@ -60,7 +68,12 @@ public class CommentController extends HttpServlet {
         var words = req.getRequestURI().split("/");
         if (words.length == 4 & req.getMethod().equals("POST")) {
             CommentEntity commentEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), CommentEntity.class);
-            CommentEntity comment = commentService.addComment(commentEntity);
+            CommentEntity comment = null;
+            try {
+                comment = commentService.addComment(commentEntity);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             resp.setStatus(201);
             out.println(objectMapper.writeValueAsString(comment));
             out.close();
@@ -81,7 +94,12 @@ public class CommentController extends HttpServlet {
             String id = words[4];
             Long commentId = Long.parseLong(id);
             CommentEntity commentEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), CommentEntity.class);
-            CommentEntity comment = commentService.updateComment(commentId, commentEntity);
+            CommentEntity comment = null;
+            try {
+                comment = commentService.updateComment(commentId, commentEntity);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String commentString = objectMapper.writeValueAsString(comment);
             out.println(commentString);
             out.close();
@@ -101,7 +119,11 @@ public class CommentController extends HttpServlet {
         if (words.length == 5 && req.getMethod().equals("DELETE")) {
             String id = words[4];
             Long commentId = Long.parseLong(id);
-            commentService.deleteComment(commentId);
+            try {
+                commentService.deleteComment(commentId);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             out.println("Comment deleted");
             out.close();
             return;

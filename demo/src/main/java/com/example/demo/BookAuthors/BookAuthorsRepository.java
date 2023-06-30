@@ -1,39 +1,57 @@
 package com.example.demo.BookAuthors;
 
 import com.example.demo.DataBase;
-import com.example.demo.Repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class BookAuthorsRepository implements Repository<BookAuthorsEntity, Long> {
-    @Override
-    public BookAuthorsEntity findByID(Long aLong) {
-        return null;
+public class BookAuthorsRepository {
+
+    public List<BookAuthorsEntity> findByAuthorId(Long aLong) throws SQLException {
+        List<BookAuthorsEntity> bookAuthorsEntities = new ArrayList<>();
+        Connection connection = DataBase.getConnection();
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select * from book_authors where author_id = ?"
+        )){
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            while(rs.next()){
+                bookAuthorsEntities.add(new BookAuthorsEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
+            }
+            return bookAuthorsEntities;
+        }
+    }
+    public List<BookAuthorsEntity> findByBookId(Long aLong)throws SQLException {
+        List<BookAuthorsEntity> bookAuthorsEntities = new ArrayList<>();
+        Connection connection = DataBase.getConnection();
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select * from book_authors where book_id = ?"
+        )){
+            statement.setLong(1, aLong);
+            var rs = statement.executeQuery();
+            while(rs.next()){
+                bookAuthorsEntities.add(new BookAuthorsEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
+            }
+            return bookAuthorsEntities;
+        }
     }
 
-    @Override
-    public List<BookAuthorsEntity> findAll() {
-        return null;
+    public BookAuthorsEntity create(BookAuthorsEntity bookAuthors) throws SQLException {
+        Connection connection = DataBase.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT INTO book_authors (book_id, author_id) VALUES (?, ?)")) {
+            preparedStatement.setLong(1, bookAuthors.getBookId());
+            preparedStatement.setLong(2, bookAuthors.getAuthorId());
+            preparedStatement.executeUpdate();
+            connection.close();
+            return bookAuthors;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    @Override
-    public <S extends BookAuthorsEntity> S save(S entity) {
-        return Repository.super.save(entity);
-    }
-
-    @Override
-    public void deleteByID(Long aLong) {
-
-    }
-
-    public List<BookAuthorsEntity> findByAuthorId(Long aLong){
-        return DataBase.getInstance().createNamedQuery("book_authors.findByAuthorID", BookAuthorsEntity.class)
-                .setParameter(1, aLong)
-                .getResultList();
-    }
-    public List<BookAuthorsEntity> findByBookId(Long aLong){
-        return DataBase.getInstance().createNamedQuery("book_authors.findByBookId", BookAuthorsEntity.class)
-                .setParameter(1, aLong)
-                .getResultList();
-    }
 }

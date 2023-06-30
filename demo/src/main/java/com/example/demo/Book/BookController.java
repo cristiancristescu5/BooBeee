@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +48,12 @@ public class BookController extends HttpServlet {
         // /api/v1/books -- aduaga carte
         if (words.length == 4 && req.getMethod().equals("POST")) {
             BookEntity bookEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), BookEntity.class);
-            BookEntity book = bookService.addBook(bookEntity);
+            BookEntity book = null;
+            try {
+                book = bookService.addBook(bookEntity);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String responseBody = objectMapper.writeValueAsString(book);
             out.println(responseBody);
             out.close();
@@ -115,13 +121,18 @@ public class BookController extends HttpServlet {
         System.out.println(Arrays.toString(words));
         //get all books
         if (words.length == 4 && req.getMethod().equals("GET")) {
-            List<BookEntity> books = bookService.getAllBooks();
+            List<BookEntity> books = null;
+            try {
+                books = bookService.getAllBooks();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String responseBody = objectMapper.writeValueAsString(books);
             out.println(responseBody);
             out.close();
             return;
         }
-        //get only a book, url = /books/{bookId}
+        //get only a book, url = /books/{bookId} _ api v1 books id
         if (words.length == 5 && !words[4].split("=")[0].equals("filter") && req.getMethod().equals("GET")) {
             String id = words[4];
             Long bookId = Long.parseLong(id);
@@ -129,7 +140,8 @@ public class BookController extends HttpServlet {
             try {
                 BookEntity book = bookService.getBookById(bookId);
                 bookString = objectMapper.writeValueAsString(book);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | SQLException e) {
+                e.printStackTrace();
                 resp.setStatus(204);
                 out.println(e.getMessage());
                 out.close();
@@ -139,7 +151,7 @@ public class BookController extends HttpServlet {
             out.close();
             return;
         }
-        //get the author of a book, url = /books/{bookId}/author
+//        get the author of a book, url = /books/{bookId}/author
         if (words.length == 6 && req.getMethod().equals("GET")) {
             if (words[5].equals("author")) {
                 String id = words[4];
@@ -261,7 +273,11 @@ public class BookController extends HttpServlet {
         if (words.length == 5 && req.getMethod().equals("DELETE")) {
             String id = words[4];
             Long bookId = Long.parseLong(id);
-            bookService.deleteBook(bookId);
+            try {
+                bookService.deleteBook(bookId);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             out.println("Book deleted");
             out.close();
             return;
@@ -281,7 +297,12 @@ public class BookController extends HttpServlet {
             String id = req.getRequestURI().split("/")[4];
             Long bookId = Long.parseLong(id);
             BookEntity bookEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), BookEntity.class);
-            BookEntity book = bookService.updateBook(bookId, bookEntity);
+            BookEntity book = null;
+            try {
+                book = bookService.updateBook(bookId, bookEntity);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             String responseBody = objectMapper.writeValueAsString(book);
             out.println(responseBody);
             out.close();

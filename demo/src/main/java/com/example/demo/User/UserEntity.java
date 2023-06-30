@@ -4,43 +4,14 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-@Entity
-@Table(name = "users", schema = "public", catalog = "BooDB")
-@NamedQueries({
-        @NamedQuery(name = "user.findById",
-                query = "select user from UserEntity user where id = ?1"),
-        @NamedQuery(name = "user.findAll",
-                query = "SELECT user FROM UserEntity user"),
-        @NamedQuery(name = "user.findByEmail",
-                query = "SELECT user FROM UserEntity user where email = ?1"),
-        @NamedQuery(name = "user.findByName", query = "SELECT user FROM UserEntity user where name = ?1")
-})
 public class UserEntity implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
     private long id;
-    @Basic
-    @Column(name = "name", nullable = false, length = -1)
     private String name;
-    @Basic
-    @Column(name = "email", nullable = false, length = -1)
     private String email;
-    @Basic
-    @Column(name = "password", nullable = false, length = -1)
     private String password;
-    @Basic
-    @Column(name = "pictureurl", nullable = true, length = -1)
     private String pictureurl;
-    @Basic
-    @Column(name = "createdat", nullable = true)
     private Timestamp createdat;
-    @Basic
-    @Column(name = "updatedat", nullable = true)
     private Timestamp updatedat;
-    @Basic
-    @Column(name = "verified", nullable = true)
     private Boolean verified;
     public UserEntity(){}
 
