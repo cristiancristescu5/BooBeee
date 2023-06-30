@@ -15,12 +15,6 @@ public class DataBase {
     private static final HikariConfig config;
     private static final HikariDataSource dataSource;
     static {
-//        try{
-//            Class.forName("org.postgresql.Driver");
-//        }catch (ClassNotFoundException e){
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
         config = new HikariConfig();
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);

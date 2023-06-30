@@ -73,10 +73,10 @@
         <url-pattern>/groups/*</url-pattern>
     </filter-mapping>
 
-<!--    <filter-mapping>-->
-<!--        <filter-name>AuthenticationFilter</filter-name>-->
-<!--        <url-pattern>/export-as-CSV</url-pattern>-->
-<!--    </filter-mapping>-->
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/export-as-CSV</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
@@ -95,6 +95,16 @@
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/bookAdmin</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/reviews</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/reviews/*</url-pattern>
     </filter-mapping>
 
 </web-app>

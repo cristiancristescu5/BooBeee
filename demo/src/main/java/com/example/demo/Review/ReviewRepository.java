@@ -100,6 +100,7 @@ public class ReviewRepository{
 
     public ReviewEntity create(ReviewEntity review) throws SQLException {
         Connection connection = DataBase.getConnection();
+        review.setCreatedat(new Timestamp(System.currentTimeMillis()));
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "INSERT INTO review (rating, description, createdat, user_id, book_id) VALUES (?, ?, ?, ?, ?)")) {
             preparedStatement.setInt(1, review.getRating());

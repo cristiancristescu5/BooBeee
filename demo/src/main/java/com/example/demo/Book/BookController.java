@@ -3,15 +3,8 @@ package com.example.demo.Book;
 import com.example.demo.Author.AuthorEntity;
 import com.example.demo.BookAuthors.BookAuthorsService;
 import com.example.demo.BookGenres.BookGenresService;
-import com.example.demo.Comment.CommentEntity;
-import com.example.demo.Comment.CommentService;
 import com.example.demo.Genre.GenreEntity;
-import com.example.demo.RequestBodyParser;
-import com.example.demo.Review.ReviewEntity;
 import com.example.demo.Review.ReviewService;
-import com.example.demo.ReviewComment.ReviewCommentEntity;
-import com.example.demo.ReviewComment.ReviewCommentService;
-import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -20,7 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.ws.rs.GET;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -35,68 +27,6 @@ public class BookController extends HttpServlet {
     private final BookAuthorsService bookAuthorsService = new BookAuthorsService();
     private final ReviewService reviewService = new ReviewService();
     private final BookGenresService bookGenresService = new BookGenresService();
-    private final ReviewCommentService reviewCommentService = new ReviewCommentService();
-    private final UserService userService = new UserService();
-    private final CommentService commentService = new CommentService();
-
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/JSON");
-        resp.setStatus(201);
-        var words = req.getRequestURI().split("/");
-        PrintWriter out = resp.getWriter();
-        // /api/v1/books/{bookId}/reviews -- adugarea unui review
-
-        if (words.length == 6 && words[5].equals("reviews")) {
-            String responseBody;
-            try {
-                String bookId = words[4];
-                Long bId = Long.parseLong(bookId);
-                Object email = req.getAttribute("email");
-                String userEmail = email.toString();
-                Long userId = userService.findByEmail(userEmail).getId();
-                ReviewEntity reviewEntity = objectMapper.readValue(RequestBodyParser.parseRequest(req), ReviewEntity.class);
-                reviewEntity.setBookId(bId);
-                reviewEntity.setUserId(userId);
-                ReviewEntity review = reviewService.create(reviewEntity);
-                responseBody = objectMapper.writeValueAsString(review);
-            } catch (Exception e) {
-                out.println(e.getMessage());
-                out.close();
-                resp.setStatus(400);
-                return;
-            }
-            out.println(responseBody);
-            out.close();
-            return;
-
-        }
-        // /api/v1/books/{booksId}/reviews/{reviewId} -- adaugarea unui comentariu
-        if (words.length == 7 && words[5].equals("reviews")) {
-            String responseBody;
-            try {
-                Long reviewId = Long.parseLong(words[6]);
-//                Long bookId = Long.parseLong(words[4]);
-                Object email = req.getAttribute("email");
-                Long userId = userService.findByEmail(email.toString()).getId();
-                CommentEntity comment = objectMapper.readValue(RequestBodyParser.parseRequest(req), CommentEntity.class);
-                CommentEntity commentEntity = commentService.addComment(comment);
-                responseBody = objectMapper.writeValueAsString(commentEntity);
-                ReviewCommentEntity entity = reviewCommentService.addCommentToReview(userId, reviewId, commentEntity.getId());
-            } catch (Exception e) {
-                out.println(e.getMessage());
-                out.close();
-                resp.setStatus(400);
-                return;
-            }
-            out.println(responseBody);
-            out.close();
-            resp.setStatus(201);
-        }
-        resp.setStatus(400);
-        out.println("Bad request");
-        out.close();
-    }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
