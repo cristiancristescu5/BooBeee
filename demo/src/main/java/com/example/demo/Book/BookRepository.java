@@ -5,6 +5,7 @@ import com.example.demo.DataBase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BookRepository {
     public BookEntity findByID(Long aLong) throws SQLException {
@@ -97,6 +98,7 @@ public class BookRepository {
 
     public BookEntity create(BookEntity book) throws SQLException {
         Connection connection = DataBase.getConnection();
+        book.setIsbn(UUID.randomUUID().toString());
         try(PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into book (title, isbn, description, picture) values (?, ?, ?, ?)")){
             preparedStatement.setString(1, book.getTitle());

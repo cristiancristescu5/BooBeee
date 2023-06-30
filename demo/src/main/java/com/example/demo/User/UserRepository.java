@@ -22,7 +22,8 @@ public class UserRepository{
                         resultSet.getString(5),
                         resultSet.getTimestamp(6),
                         resultSet.getTimestamp(7),
-                        resultSet.getBoolean(8)) : null;
+                        resultSet.getBoolean(8),
+                        resultSet.getBoolean(9)) : null;
             } catch (SQLException e) {
 
                 return null;
@@ -43,7 +44,8 @@ public class UserRepository{
                     rs.getString(5),
                     rs.getTimestamp(6),
                     rs.getTimestamp(7),
-                    rs.getBoolean(8)
+                    rs.getBoolean(8),
+                    rs.getBoolean(9)
             ):null;
         }catch (SQLException e){
             e.printStackTrace();
@@ -66,7 +68,8 @@ public class UserRepository{
                     rs.getString(5),
                     rs.getTimestamp(6),
                     rs.getTimestamp(7),
-                    rs.getBoolean(8)) : null;
+                    rs.getBoolean(8),
+                    rs.getBoolean(9)) : null;
         }catch (SQLException e){
 
             return null;

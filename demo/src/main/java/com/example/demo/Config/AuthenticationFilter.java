@@ -1,5 +1,6 @@
 package com.example.demo.Config;
 
+import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -67,14 +68,14 @@ public class AuthenticationFilter implements Filter {
     }
 
     private boolean isUserPresent(String email) {
-        try {
-            var user = userService.findByEmail(email);
-        } catch (NoResultException e) {
+        UserEntity user = null;
+        try{
+            user = userService.findByEmail(email);
+        }catch (SQLException e){
+            e.printStackTrace();
             return false;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        return true;
+        return user!=null;
     }
 
 }

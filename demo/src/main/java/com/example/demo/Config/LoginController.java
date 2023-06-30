@@ -115,7 +115,11 @@ public class LoginController extends HttpServlet {
         try {
             userPassword = PasswordUtils.decryptString(user.getPassword());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            resp.setStatus(400);
+            out.println("Wrong password");
+            out.close();
+            return;
         }
         if (!userPassword.equals(password)) {
             resp.setStatus(401);
@@ -135,7 +139,7 @@ public class LoginController extends HttpServlet {
         cookie.setPath("/");
         cookie.setDomain("localhost");
         cookie.setMaxAge((int)System.currentTimeMillis()+864_000);
-
+        cookie.setAttribute("Same-Site", "Strict");
         resp.addCookie(cookie);
         out.println(response);
         out.close();

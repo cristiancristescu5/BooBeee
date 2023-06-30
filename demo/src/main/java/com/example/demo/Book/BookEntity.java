@@ -27,6 +27,7 @@ public class BookEntity implements Serializable {
         this.description = description;
         this.picture = picture;
     }
+    public BookEntity(){}
 
     public long getId() {
         return id;
