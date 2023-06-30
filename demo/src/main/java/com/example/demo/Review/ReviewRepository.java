@@ -14,15 +14,17 @@ public class ReviewRepository{
              ResultSet resultSet = statement.executeQuery(
                      "select * from review where id = '" + aLong + "'")) {
 
-            return resultSet.next() ? new ReviewEntity(
+            ReviewEntity r = resultSet.next() ? new ReviewEntity(
                     resultSet.getLong(1),
                     resultSet.getInt(2),
                     resultSet.getString(3),
                     resultSet.getTimestamp(4),
                     resultSet.getLong(5),
                     resultSet.getLong(6)) : null;
+            connection.close();
+            return r;
         } catch (SQLException e) {
-
+            connection.close();
             return null;
         }
     }
@@ -45,11 +47,12 @@ public class ReviewRepository{
                         resultSet.getLong(5),
                         resultSet.getLong(6)));
             }
-
+            connection.close();
             return reviews;
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
+            connection.close();
             return null;
         }
     }
@@ -61,11 +64,12 @@ public class ReviewRepository{
                 "delete from review where id = ?")) {
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
-            statement.close();
+            connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
+            connection.close();
         }
     }
 
@@ -85,10 +89,11 @@ public class ReviewRepository{
                         rs.getLong(5),
                         rs.getLong(6)));
             }
-
+            connection.close();
             return reviews;
         }catch (SQLException e){
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }
@@ -103,10 +108,11 @@ public class ReviewRepository{
             preparedStatement.setLong(4, review.getUserId());
             preparedStatement.setLong(5, review.getBookId());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return review;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

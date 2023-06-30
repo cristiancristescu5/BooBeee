@@ -12,6 +12,7 @@ import java.util.List;
 
 public class GroupMembersRepository {
     private final GroupRepository groupRepository = new GroupRepository();
+
     public List<GroupMembersEntity> findByUserId(Long aLong) throws SQLException {
         Connection connection = DataBase.getConnection();
         List<GroupMembersEntity> groupMembersEntities = new ArrayList<>();
@@ -23,10 +24,11 @@ public class GroupMembersRepository {
             while (rs.next()) {
                 groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
             }
+            connection.close();
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -42,10 +44,11 @@ public class GroupMembersRepository {
             while (rs.next()) {
                 groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
             }
+            connection.close();
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -58,10 +61,11 @@ public class GroupMembersRepository {
             statement.setLong(1, userId);
             statement.setLong(2, groupId);
             statement.executeUpdate();
+            connection.close();
             return findByUserIdAndGroupId(userId, groupId);
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -74,10 +78,12 @@ public class GroupMembersRepository {
         )) {
             statement.setLong(1, aLong);
             var rs = statement.executeQuery();
-            return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
+            GroupMembersEntity e = rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
+            connection.close();
+            return e;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -93,10 +99,11 @@ public class GroupMembersRepository {
             while (rs.next()) {
                 groupMembersEntities.add(new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)));
             }
+            connection.close();
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -109,12 +116,12 @@ public class GroupMembersRepository {
         )) {
             statement.setLong(1, aLong);
             statement.executeUpdate();
-            connection.commit();
+            connection.close();
 
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
-
+            connection.close();
         }
     }
 
@@ -125,24 +132,26 @@ public class GroupMembersRepository {
         )) {
             statement.setLong(1, id);
             statement.executeUpdate();
-            connection.commit();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
-
+            connection.close();
         }
     }
 
-    public GroupEntity findIdByGroupName(String name) throws SQLException{
+    public GroupEntity findIdByGroupName(String name) throws SQLException {
         Connection connection = DataBase.getConnection();
-        try(PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                 "select * from group_ where name = ?"
-        )){
+        )) {
             statement.setString(1, name);
             var rs = statement.executeQuery();
-            return rs.next() ? groupRepository.findByID(rs.getLong(1)) : null;
-        }catch (SQLException e){
-
+            GroupEntity g = rs.next() ? groupRepository.findByID(rs.getLong(1)) : null;
+            connection.close();
+            return g;
+        } catch (SQLException e) {
+            connection.close();
             e.printStackTrace();
             return null;
         }
@@ -150,16 +159,18 @@ public class GroupMembersRepository {
 
     public GroupMembersEntity findByUserIdAndGroupId(Long userId, Long groupId) throws SQLException {
         Connection connection = DataBase.getConnection();
-        try(PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = connection.prepareStatement(
                 "select * from group_members where user_id = ? and group_id = ?"
-        )){
+        )) {
             statement.setLong(1, userId);
             statement.setLong(2, groupId);
             var rs = statement.executeQuery();
-            return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
-        }catch (SQLException e){
+            GroupMembersEntity g = rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
+            connection.close();
+            return g;
+        } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -171,10 +182,11 @@ public class GroupMembersRepository {
             preparedStatement.setLong(1, groupMembers.getUserId());
             preparedStatement.setLong(2, groupMembers.getGroupId());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return groupMembers;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

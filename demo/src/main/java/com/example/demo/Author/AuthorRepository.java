@@ -15,7 +15,7 @@ public class AuthorRepository {
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "select * from author where id = '" + aLong + "'")) {
             var rs = preparedStatement.executeQuery();
-            return rs.next() ? new AuthorEntity(
+            AuthorEntity author =  rs.next() ? new AuthorEntity(
                     rs.getLong(1),
                     rs.getDate(2),
                     rs.getDate(3),
@@ -23,9 +23,10 @@ public class AuthorRepository {
                     rs.getString(5),
                     rs.getString(6),
                     rs.getString(7)) : null;
+            connection.close();
+            return author;
         } catch (SQLException e) {
-            connection.rollback();
-
+            connection.close();
             System.err.println(e.getMessage());
             return null;
         }
@@ -49,6 +50,7 @@ public class AuthorRepository {
                             rs.getString(7))
                     );
                 }
+                connection.close();
                 return authorEntities;
             }
         }
@@ -63,10 +65,12 @@ public class AuthorRepository {
             preparedStatement.setLong(1, aLong);
             var rs = preparedStatement.executeUpdate();
             connection.commit();
+            connection.close();
 
         }catch (SQLException e){
             e.printStackTrace();
             connection.rollback();
+            connection.close();
 
         }
     }
@@ -84,12 +88,12 @@ public class AuthorRepository {
             statement.setString(6, authorEntity.getWebsiteurl());
             statement.executeUpdate();
             connection.commit();
-
+            connection.close();
             return authorEntity;
         }catch (SQLException e){
             e.printStackTrace();
             connection.rollback();
-
+            connection.close();
             return  null;
         }
     }
@@ -105,10 +109,11 @@ public class AuthorRepository {
             preparedStatement.setString(5, author.getPictureurl());
             preparedStatement.setString(6, author.getWebsiteurl());
             preparedStatement.executeUpdate();
-            
+            connection.close();
             return author;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

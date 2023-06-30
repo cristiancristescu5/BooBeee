@@ -15,14 +15,16 @@ public class BookRepository {
         )) {
             statement.setLong(1, aLong);
             var resultSet = statement.executeQuery();
-            return resultSet.next() ? new BookEntity(resultSet.getLong(1),
+            BookEntity book = resultSet.next() ? new BookEntity(resultSet.getLong(1),
                     resultSet.getString(2),
                     resultSet.getString(3),
                     resultSet.getString(4),
                     resultSet.getString(5)) : null;
+            connection.close();
+            return book;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -43,37 +45,29 @@ public class BookRepository {
                         resultSet.getString(4),
                         resultSet.getString(5)));
             }
-
+            connection.close();
             return books;
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
+            connection.close();
             return null;
         }
     }
 
-    public void deleteByID(Long aLong) {
-        Connection connection = null;
+    public void deleteByID(Long aLong) throws SQLException {
+        Connection connection = DataBase.getConnection();
         PreparedStatement statement = null;
         try {
-            connection = DataBase.getConnection();
             String sql = "DELETE FROM book WHERE id = ?";
             statement = connection.prepareStatement(sql);
             statement.setLong(1, aLong);
             statement.executeUpdate();
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+//            assert connection != null;
+            connection.close();
         }
     }
 
@@ -87,11 +81,12 @@ public class BookRepository {
             preparedStatement.setString(4, bookEntity.getPicture());
             preparedStatement.setLong(5, id);
             preparedStatement.executeUpdate();
-
+            connection.close();
             return bookEntity;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             connection.rollback();
+            connection.close();
             return null;
         }
     }
@@ -107,10 +102,11 @@ public class BookRepository {
             preparedStatement.setString(3, book.getDescription());
             preparedStatement.setString(4, book.getPicture());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return book;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

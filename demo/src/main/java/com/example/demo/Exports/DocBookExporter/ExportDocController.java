@@ -2,6 +2,8 @@ package com.example.demo.Exports.DocBookExporter;
 
 import com.example.demo.Exports.ExportInfo;
 import com.example.demo.Exports.ExportInfoService;
+import com.example.demo.Exports.ExportMessage;
+import com.example.demo.Exports.ExportMessageService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +19,7 @@ import java.util.List;
 @WebServlet(urlPatterns = {"/export-as-docBook"})
 public class ExportDocController extends HttpServlet {
     private final ExportInfoService exportInfoService = new ExportInfoService();
+    private final ExportMessageService exportMessageService = new ExportMessageService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try{
@@ -30,6 +33,10 @@ public class ExportDocController extends HttpServlet {
             StringWriter stringWriter = new StringWriter();
             for(ExportInfo e : exportInfoList){
                 stringWriter.append("<book><entry>").append(e.toString()).append("</entry></book>");
+            }
+            List<ExportMessage> exportMessages = exportMessageService.getExportMessages();
+            for(ExportMessage exportMessage : exportMessages){
+                stringWriter.append("<statistics><entry>").append(exportMessage.getMessage()).append("</entry></statistics>");
             }
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();

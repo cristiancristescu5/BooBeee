@@ -2,6 +2,8 @@ package com.example.demo.Exports.CSVExporter;
 
 import com.example.demo.Exports.ExportInfo;
 import com.example.demo.Exports.ExportInfoService;
+import com.example.demo.Exports.ExportMessage;
+import com.example.demo.Exports.ExportMessageService;
 import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import jakarta.servlet.ServletException;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ExportCSVController extends HttpServlet {
     private final UserService userService = new UserService();
     private final ExportInfoService exportInfoService = new ExportInfoService();
+    private final ExportMessageService exportMessageService = new ExportMessageService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
@@ -32,6 +35,10 @@ public class ExportCSVController extends HttpServlet {
             resp.setContentType("text/csv");
             resp.setHeader("Content-Disposition", "attachment; filename=\"data.csv\"");
             out.println(userInfo);
+            List<ExportMessage> exportMessages = exportMessageService.getExportMessages();
+            for(ExportMessage exportMessage : exportMessages){
+                out.println(exportMessage.getMessage());
+            }
             for (ExportInfo exportInfo : exportInfos) {
                 System.out.println("Exporting");
                 out.println(exportInfo.toString());

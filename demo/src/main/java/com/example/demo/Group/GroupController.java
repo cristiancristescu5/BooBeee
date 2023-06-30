@@ -7,7 +7,7 @@ import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.persistence.NoResultException;
+    import jakarta.persistence.NoResultException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -43,11 +43,14 @@ public class GroupController extends HttpServlet {
                 return;
             }
             boolean found = true;
+            GroupEntity existingGroup = null;
             try {
-                GroupEntity existingGroup = groupService.findByName(groupEntity.getName());
-            } catch (NoResultException | SQLException e) {
-                found = false;
+                existingGroup = groupService.findByName(groupEntity.getName());
+            } catch (SQLException e) {
                 e.printStackTrace();
+            }
+            if (existingGroup == null) {
+                found = false;
             }
             if (!found) {
                 Long userId = null;
@@ -65,7 +68,7 @@ public class GroupController extends HttpServlet {
                 }
                 try {
                     groupMembersService.addMember(groupEntity.getId(), userId);
-                }catch (SQLException e){
+                } catch (SQLException e) {
                     e.printStackTrace();
                     resp.setStatus(400);
                     out.println("Bad Request");
@@ -84,58 +87,76 @@ public class GroupController extends HttpServlet {
             String groupName = words[4];
             String responseBody;
             Long groupId;
+            GroupEntity group;
             try {
-                GroupEntity group = groupService.findByName(groupName);
+                group = groupService.findByName(groupName);
                 groupId = group.getId();
-            } catch (NoResultException | SQLException e) {
+            } catch (SQLException e) {
                 resp.setStatus(400);
-                out.println("The group " + groupName + " does not exist");
+                out.println(e.getMessage());
+                out.close();
+                System.out.println("pica grup");
+                return;
+            }
+            if (group == null) {
+                resp.setStatus(400);
+                out.println("The group does not exist");
                 out.close();
                 System.out.println("pica grup");
                 return;
             }
             Long userId;
+            UserEntity user;
             try {
                 System.out.println("verific user");
-                UserEntity user = userService.findByEmail(email);
+                user = userService.findByEmail(email);
                 userId = user.getId();
-            } catch (NoResultException e) {
+            } catch (SQLException e) {
                 System.out.println("nu exista user");
-                out.println("User with email " + email + " does not exist");
+                out.println(e.getMessage());
                 out.close();
                 resp.setStatus(400);
                 return;
+            }
+            if (user == null) {
+                resp.setStatus(400);
+                out.println("Bad Request");
+                out.close();
+                return;
+            }
+
+            System.out.println("verific user in grup");
+            GroupMembersEntity groupMembersEntity1;
+            try {
+                groupMembersEntity1 = groupMembersService.findMemberInAGroup(userId, groupId);//problema
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            try {
-                System.out.println("verific user in grup");
-                groupMembersService.findMemberInAGroup(userId, groupId);//problema
+            if (groupMembersEntity1 != null) {
                 resp.setStatus(400);
                 out.println("You are already in this group");
                 out.close();
                 return;
-            } catch (NoResultException e) {
-                System.out.println("nu exista user in grup");
-                GroupMembersEntity groupMembersEntity;
-                try {
-                    groupMembersEntity = groupMembersService.addMember(groupId, userId);
-                }catch (SQLException f){
-                    f.printStackTrace();
-                    resp.setStatus(400);
-                    out.println("Bad Request");
-                    out.close();
-                    return;
-                }
+            }
+
+            System.out.println("nu exista user in grup");
+            GroupMembersEntity groupMembersEntity;
+            try {
+                groupMembersEntity = groupMembersService.addMember(groupId, userId);
+            } catch (SQLException f) {
+                f.printStackTrace();
+                resp.setStatus(400);
+                out.println("Bad Request");
+                out.close();
+                return;
+            }
+            if (groupMembersEntity != null) {
                 responseBody = objectMapper.writeValueAsString(groupMembersEntity);
                 resp.setStatus(201);
                 out.println(responseBody);
                 out.close();
                 return;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
-
         }
         resp.setStatus(400);
         out.println("Bad Request");
@@ -168,8 +189,8 @@ public class GroupController extends HttpServlet {
         if (words.length == 4) {
             List<GroupEntity> groups;
             try {
-               groups = groupService.getAllGroups();
-            }catch (SQLException e){
+                groups = groupService.getAllGroups();
+            } catch (SQLException e) {
                 e.printStackTrace();
                 resp.setStatus(400);
                 out.println("Bad Request");
@@ -179,7 +200,7 @@ public class GroupController extends HttpServlet {
             String responseBody;
             try {
                 responseBody = objectMapper.writeValueAsString(groups);
-            }catch (Exception e){
+            } catch (Exception e) {
                 out.println("Bad request");
                 out.close();
                 resp.setStatus(400);
@@ -222,15 +243,15 @@ public class GroupController extends HttpServlet {
             groupEntity = groupService.findByName(groupName);
             groupMembersEntity = groupMembersService.findMemberInAGroup(entity.getId(), groupEntity.getId());
             groupMembersService.deleteMember(groupMembersEntity.getId());
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             out.println("You are not in this group");
             out.close();
             resp.setStatus(400);
             return;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            out.println("Bad request");
+        }
+        if(groupMembersEntity == null || groupEntity==null){
+            out.println("Bad Request");
             out.close();
             resp.setStatus(400);
             return;

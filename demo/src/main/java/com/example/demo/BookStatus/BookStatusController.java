@@ -52,7 +52,7 @@ public class BookStatusController extends HttpServlet {
             resp.setStatus(409);
             out.println("Book already exists");
             out.close();
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             BookStatusEntity bookStatusEntity = null;
             try {
                 bookStatusEntity = bookStatusService.addBookStatus(new BookStatusEntity(user.getId(), bookId, bookStatus));
@@ -65,8 +65,6 @@ public class BookStatusController extends HttpServlet {
             String finalResponseBody = resp.getOutputStream().toString();
             System.out.println(finalResponseBody);
             out.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
     // /api/v1/addBookStatus/{bookId}/{status}

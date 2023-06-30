@@ -16,10 +16,12 @@ public class ReviewCommentRepository {
         )) {
             statement.setLong(1, aLong);
             var rs = statement.executeQuery();
-            return rs.next() ? new ReviewCommentEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4)) : null;
+            ReviewCommentEntity e = rs.next() ? new ReviewCommentEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4)) : null;
+            connection.close();
+            return e;
         }catch(SQLException e){
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -40,6 +42,7 @@ public class ReviewCommentRepository {
                         rs.getLong(4)
                 ));
             }
+            connection.close();
             return reviewCommentEntities;
         }
     }
@@ -58,6 +61,7 @@ public class ReviewCommentRepository {
                         rs.getLong(4)
                 ));
             }
+            connection.close();
             return reviewCommentEntities;
         }
 
@@ -72,10 +76,11 @@ public class ReviewCommentRepository {
             preparedStatement.setLong(2, reviewComment.getReviewId());
             preparedStatement.setLong(3, reviewComment.getCommentId());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return reviewComment;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

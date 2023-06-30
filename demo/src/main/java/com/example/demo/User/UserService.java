@@ -1,6 +1,5 @@
 package com.example.demo.User;
 
-import jakarta.persistence.NoResultException;
 
 import java.sql.SQLException;
 import java.util.List;

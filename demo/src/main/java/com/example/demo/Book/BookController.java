@@ -179,27 +179,6 @@ public class BookController extends HttpServlet {
                 return;
             }
         }
-        //get the reviews of a book, url = /books/{bookId}/reviews
-        if (words.length == 6 && req.getMethod().equals("GET")) {
-            if (words[5].equals("reviews")) {
-                String id = words[4];
-                Long bookId = Long.parseLong(id);
-                String responseBody;
-                try {
-                    List<ReviewEntity> reviewEntities = reviewService.findReviewsByBookId(bookId);
-                    responseBody = objectMapper.writeValueAsString(reviewEntities);
-                } catch (Exception e) {
-                    resp.setStatus(204);
-                    out.println(e.getMessage());
-                    out.close();
-                    return;
-                }
-                resp.setStatus(200);
-                out.println(responseBody);
-                out.close();
-                return;
-            }
-        }
         // get the genre of a book, url = /books/{bookId}/genre
         if (words.length == 6 && req.getMethod().equals("GET")) {
             if (words[5].equals("genre")) {
@@ -209,29 +188,6 @@ public class BookController extends HttpServlet {
                 try {
                     GenreEntity genre = bookGenresService.findGenreByBookId(bookId);
                     responseBody = objectMapper.writeValueAsString(genre);
-                } catch (Exception e) {
-                    out.println(e.getMessage());
-                    resp.setStatus(204);
-                    out.close();
-                    return;
-                }
-                out.println(responseBody);
-                out.close();
-                resp.setStatus(200);
-                return;
-            }
-        }
-        //get the comments of a review, url = /books/{bookId}/reviews/{reviewId}/comments
-        if (words.length == 8 && req.getMethod().equals("GET")) {
-            if (words[7].equals("comments")) {
-                String id1 = words[4];
-                Long bookId = Long.parseLong(id1);
-                String id2 = words[6];
-                Long reviewId = Long.parseLong(id2);
-                String responseBody;
-                try {
-                    List<CommentEntity> commentEntities = reviewCommentService.findCommentsByReviewId(reviewId);
-                    responseBody = objectMapper.writeValueAsString(commentEntities);
                 } catch (Exception e) {
                     out.println(e.getMessage());
                     resp.setStatus(204);

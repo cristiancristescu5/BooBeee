@@ -14,10 +14,10 @@ public class CommentRepository {
                 "delete from comment_ where id = ?")) {
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
-            statement.close();
-
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
         }
     }
 
@@ -27,12 +27,14 @@ public class CommentRepository {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "select * from comment_ where id = '" + aLong + "'")) {
-            return resultSet.next() ? new CommentEntity(resultSet.getLong(1),
+            CommentEntity comment =  resultSet.next() ? new CommentEntity(resultSet.getLong(1),
             resultSet.getString(2),
             resultSet.getTimestamp(3)): null;
+            connection.close();
+            return comment;
         } catch (SQLException e) {
             e.printStackTrace();
-
+            connection.close();
             return null;
         }
     }
@@ -51,7 +53,7 @@ public class CommentRepository {
                         resultSet.getString(2),
                         resultSet.getTimestamp(3)));
             }
-
+            connection.close();
             return comments;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,11 +68,12 @@ public class CommentRepository {
             preparedStatement.setString(1, commentEntity.getDescription());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
-
+            connection.close();
             return commentEntity;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             connection.rollback();
+            connection.close();
             return null;
         }
     }
@@ -82,10 +85,11 @@ public class CommentRepository {
             preparedStatement.setString(1, comment.getDescription());
             preparedStatement.setTimestamp(2, comment.getCreatedat());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return comment;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }

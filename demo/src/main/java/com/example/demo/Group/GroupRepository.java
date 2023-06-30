@@ -8,39 +8,42 @@ import java.util.List;
 
 public class GroupRepository {
 
-    public GroupEntity findByID(Long aLong) throws SQLException{
+    public GroupEntity findByID(Long aLong) throws SQLException {
         Connection connection = DataBase.getConnection();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "select * from group_ where id = '" + aLong + "'")) {
 
-            return resultSet.next() ? new GroupEntity(
+            GroupEntity g = resultSet.next() ? new GroupEntity(
                     resultSet.getLong(1),
                     resultSet.getString(2),
                     resultSet.getString(3),
                     resultSet.getTimestamp(4),
-                    resultSet.getInt(5)): null;
+                    resultSet.getInt(5)) : null;
+            connection.close();
+            return g;
         } catch (SQLException e) {
-
+            connection.close();
+            e.printStackTrace();
             return null;
         }
     }
 
-    public void deleteByID(Long aLong) throws SQLException{
+    public void deleteByID(Long aLong) throws SQLException {
         Connection connection = DataBase.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(
                 "delete from group_ where id = ?")) {
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
-            statement.close();
-
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
         }
     }
 
 
-    public List<GroupEntity> findAll() throws SQLException{
+    public List<GroupEntity> findAll() throws SQLException {
         Connection connection = DataBase.getConnection();
         List<GroupEntity> groups = new ArrayList<>();
         try (
@@ -56,11 +59,12 @@ public class GroupRepository {
                         resultSet.getTimestamp(4),
                         resultSet.getInt(5)));
             }
-
+            connection.close();
             return groups;
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
+            connection.close();
             return null;
         }
     }
@@ -75,56 +79,66 @@ public class GroupRepository {
             preparedStatement.setInt(4, group.getMembersCount());
             preparedStatement.setLong(5, id);
             preparedStatement.executeUpdate();
-
+            connection.close();
             return group;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             connection.rollback();
+            connection.close();
             return null;
         }
     }
-    public GroupEntity findByName(String name1) throws SQLException{
+
+    public GroupEntity findByName(String name1) throws SQLException {
         Connection connection = DataBase.getConnection();
-        try(Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(
-               "select * from group_ where name = '" + name1 + "'"
-        )){
-            return resultSet.next() ? new GroupEntity(
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "select * from group_ where name = '" + name1 + "'"
+             )) {
+            GroupEntity e = resultSet.next() ? new GroupEntity(
                     resultSet.getLong(1),
                     resultSet.getString(2),
                     resultSet.getString(3),
                     resultSet.getTimestamp(4),
-                    resultSet.getInt(5)): null;
-        }catch(SQLException e){
+                    resultSet.getInt(5)) : null;
+            connection.close();
+            return e;
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             connection.rollback();
+            connection.close();
             return null;
         }
     }
-    public void updateMembersCount(String name1) throws SQLException{
+
+    public void updateMembersCount(String name1) throws SQLException {
         Connection connection = DataBase.getConnection();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "update group_ set members_count = members_count+1 where name = ? "
-        )){
+        )) {
             preparedStatement.setString(1, name1);
             preparedStatement.executeUpdate();
-
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+//            System.out.println(e.getMessage());
             connection.rollback();
+            connection.close();
         }
     }
-    public void updateMembersCountMinus(String name) throws SQLException{
+
+    public void updateMembersCountMinus(String name) throws SQLException {
         Connection connection = DataBase.getConnection();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(
+        try (PreparedStatement preparedStatement = connection.prepareStatement(
                 "update group_ set members_count = members_count-1 where name = ? "
-        )){
+        )) {
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
-
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
             connection.rollback();
+            connection.close();
         }
     }
 
@@ -137,10 +151,11 @@ public class GroupRepository {
             preparedStatement.setTimestamp(3, group.getCreatedat());
             preparedStatement.setInt(4, group.getMembersCount());
             preparedStatement.executeUpdate();
-
+            connection.close();
             return group;
         } catch (SQLException e) {
             e.printStackTrace();
+            connection.close();
             return null;
         }
     }
