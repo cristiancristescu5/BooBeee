@@ -5,6 +5,7 @@ import com.example.demo.Comment.CommentService;
 import com.example.demo.RequestBodyParser;
 import com.example.demo.ReviewComment.ReviewCommentEntity;
 import com.example.demo.ReviewComment.ReviewCommentService;
+import com.example.demo.User.UserEntity;
 import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -31,6 +32,8 @@ public class ReviewsController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var words = req.getRequestURI().split("/");
         PrintWriter out = resp.getWriter();
+        resp.setStatus(200);
+        resp.setContentType("application/json");
         if (words[3].equals("reviews") && words.length == 5) {
             String id = words[4];
             Long bookId = Long.parseLong(id);
@@ -65,6 +68,35 @@ public class ReviewsController extends HttpServlet {
                 out.close();
                 return;
             }
+            resp.setStatus(200);
+            out.println(responseBody);
+            out.close();
+            return;
+        }
+        // /api/v1/reviews/user/{reviewId}
+        if(words.length == 6 && words[4].equals("user")){
+            Long reviewId = Long.parseLong(words[5]);
+            ReviewEntity review;
+            try {
+                review = reviewService.findByID(reviewId);
+            }catch (SQLException | IllegalArgumentException e){
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println(e.getMessage());
+                out.close();
+                return;
+            }
+            UserEntity user;
+            try{
+                user = userService.getUserById(review.getUserId());
+            }catch (SQLException | IllegalArgumentException e){
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println(e.getMessage());
+                out.close();
+                return;
+            }
+            String responseBody = objectMapper.writeValueAsString(user);
             resp.setStatus(200);
             out.println(responseBody);
             out.close();

@@ -44,4 +44,14 @@ public class ReviewService {
         reviewEntity = review;
         return reviewRepository.updateById(id, review);
     }
+    public ReviewEntity findByID(Long id) throws SQLException{
+        var review = reviewRepository.findByID(id);
+        if(review == null){
+            throw new IllegalArgumentException("Review does not exist");
+        }else{
+            return review;
+        }
+
+
+    }
 }

@@ -31,7 +31,6 @@ public class UserController extends HttpServlet {
         response.setStatus(200);
         PrintWriter out = response.getWriter();
         var words = request.getRequestURI().split("/");
-        // /api/v1/users/{userEmail}
 
         if (words.length == 4) {
             System.out.println(words[3]);
@@ -52,7 +51,7 @@ public class UserController extends HttpServlet {
             out.close();
             return;
         }
-
+        // /api/v1/users/{userId}
         // api/v1/users/books --> aduce lista de carti ale user ului cu tot cu statusurile sale
         if (words.length == 5 && words[4].equals("books") && request.getMethod().equals("GET")) {
             String email = request.getAttribute("email").toString();
