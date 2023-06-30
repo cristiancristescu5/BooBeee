@@ -19,7 +19,7 @@ public class GenreRepository {
             var rs = statement.executeQuery();
             return rs.next() ? new GenreEntity(aLong, rs.getString(2)) : null;
         }catch (SQLException e){
-            connection.close();
+
             e.printStackTrace();
             return null;
         }
@@ -35,11 +35,11 @@ public class GenreRepository {
             while(rs.next()){
                 genreEntities.add(new GenreEntity(rs.getLong(1), rs.getString(2)));
             }
-            connection.close();
+
             return genreEntities;
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -61,10 +61,10 @@ public class GenreRepository {
         )){
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
-            connection.close();
+
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
         }
     }
 
@@ -90,7 +90,7 @@ public class GenreRepository {
                 "INSERT INTO genre (name) VALUES (?)")) {
             preparedStatement.setString(1, genre.getName());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return genre;
         } catch (SQLException e) {
             e.printStackTrace();

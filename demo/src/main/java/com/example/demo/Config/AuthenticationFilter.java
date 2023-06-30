@@ -7,8 +7,10 @@ import io.jsonwebtoken.Jwts;
 import jakarta.persistence.NoResultException;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -16,24 +18,32 @@ import java.sql.SQLException;
 public class AuthenticationFilter implements Filter {
     private static final String SECRET_KEY = "wsdefrgthyjutrefwderetrhgnjmk12w3e4r5t6y7u8i9o0p";
     private static final UserService userService = new UserService();
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         System.out.println("aiiiiiiiiiiiiiiiiiiiici");
-        HttpServletRequest request = ((HttpServletRequest)servletRequest);
-        HttpServletResponse response = ((HttpServletResponse)servletResponse);
+        HttpServletRequest request = ((HttpServletRequest) servletRequest);
+        HttpServletResponse response = ((HttpServletResponse) servletResponse);
         var words = request.getRequestURI().split("/");
-        if(request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))
-                ||(request.getMethod().equals("GET") && words[3].equals("export-as-CSV")
-                ||(request.getMethod().equals("GET") && words[3].equals("export-as-docBook")))
-                ||(request.getMethod().equals("PUT"))
-                ||(request.getMethod().equals("DELETE"))){
-            String authHeader = request.getHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
+        if (request.getMethod().equals("POST") || (request.getMethod().equals("GET") && words[3].equals("users"))
+                || (request.getMethod().equals("GET") && words[3].equals("export-as-CSV")
+                || (request.getMethod().equals("GET") && words[3].equals("export-as-docBook")))
+                || (request.getMethod().equals("PUT"))
+                || (request.getMethod().equals("DELETE"))) {
+            Cookie[] cookies = request.getCookies();
+            String authHeader = new String();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("sessionId")) {
+                        authHeader = cookie.getValue();
+                    }
+                }
+            }
+            if (authHeader != null && cookies != null) {
                 try {
                     Jws<Claims> claimsJws = Jwts.parser()
                             .setSigningKey(SECRET_KEY)
-                            .parseClaimsJws(token);
+                            .parseClaimsJws(authHeader);
                     String email = claimsJws.getBody().getSubject();
                     if (isUserPresent(email)) {
                         request.setAttribute("email", email);
@@ -51,14 +61,15 @@ public class AuthenticationFilter implements Filter {
                 System.out.println("aici1");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
-        }else{
+        } else {
             filterChain.doFilter(request, response);
         }
     }
-    private boolean isUserPresent(String email){
-        try{
+
+    private boolean isUserPresent(String email) {
+        try {
             var user = userService.findByEmail(email);
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);

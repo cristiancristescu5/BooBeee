@@ -65,7 +65,7 @@ public class BookGenresRepository {
             preparedStatement.setLong(1, bookGenres.getBookId());
             preparedStatement.setLong(2, bookGenres.getGenreId());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return bookGenres;
         } catch (SQLException e) {
             e.printStackTrace();

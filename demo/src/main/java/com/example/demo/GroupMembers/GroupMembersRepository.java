@@ -26,7 +26,7 @@ public class GroupMembersRepository {
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class GroupMembersRepository {
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class GroupMembersRepository {
             return findByUserIdAndGroupId(userId, groupId);
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -77,7 +77,7 @@ public class GroupMembersRepository {
             return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -96,7 +96,7 @@ public class GroupMembersRepository {
             return groupMembersEntities;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -110,11 +110,11 @@ public class GroupMembersRepository {
             statement.setLong(1, aLong);
             statement.executeUpdate();
             connection.commit();
-            connection.close();
+
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
-            connection.close();
+
         }
     }
 
@@ -129,7 +129,7 @@ public class GroupMembersRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
-            connection.close();
+
         }
     }
 
@@ -142,7 +142,7 @@ public class GroupMembersRepository {
             var rs = statement.executeQuery();
             return rs.next() ? groupRepository.findByID(rs.getLong(1)) : null;
         }catch (SQLException e){
-            connection.close();
+
             e.printStackTrace();
             return null;
         }
@@ -159,7 +159,7 @@ public class GroupMembersRepository {
             return rs.next() ? new GroupMembersEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3)) : null;
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -171,7 +171,7 @@ public class GroupMembersRepository {
             preparedStatement.setLong(1, groupMembers.getUserId());
             preparedStatement.setLong(2, groupMembers.getGroupId());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return groupMembers;
         } catch (SQLException e) {
             e.printStackTrace();

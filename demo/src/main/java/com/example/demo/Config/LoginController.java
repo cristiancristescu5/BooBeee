@@ -131,7 +131,6 @@ public class LoginController extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        resp.setHeader("Authorization", "Bearer " + token);
         Cookie cookie = new Cookie("sessionId", token);
         cookie.setPath("/");
         cookie.setDomain("localhost");

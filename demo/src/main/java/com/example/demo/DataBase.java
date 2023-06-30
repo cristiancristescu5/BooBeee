@@ -23,13 +23,6 @@ public class DataBase {
         config.setDriverClassName("org.postgresql.Driver");
         dataSource = new HikariDataSource(config);
     }
-//    public DataBase(){
-//        config.setUsername(DB_USER);
-//        config.setPassword(DB_PASSWORD);
-//        config.setJdbcUrl(DB_URL);
-//        config.setMaximumPoolSize(20);
-//        dataSource = new HikariDataSource(config);
-//    }
     public static Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }

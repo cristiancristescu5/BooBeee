@@ -15,7 +15,7 @@ public class CommentRepository {
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
             statement.close();
-            connection.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -32,7 +32,7 @@ public class CommentRepository {
             resultSet.getTimestamp(3)): null;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class CommentRepository {
                         resultSet.getString(2),
                         resultSet.getTimestamp(3)));
             }
-            connection.close();
+
             return comments;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class CommentRepository {
             preparedStatement.setString(1, commentEntity.getDescription());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
-            connection.close();
+
             return commentEntity;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -82,7 +82,7 @@ public class CommentRepository {
             preparedStatement.setString(1, comment.getDescription());
             preparedStatement.setTimestamp(2, comment.getCreatedat());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return comment;
         } catch (SQLException e) {
             e.printStackTrace();

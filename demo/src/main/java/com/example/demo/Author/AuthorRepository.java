@@ -25,7 +25,7 @@ public class AuthorRepository {
                     rs.getString(7)) : null;
         } catch (SQLException e) {
             connection.rollback();
-            connection.close();
+
             System.err.println(e.getMessage());
             return null;
         }
@@ -63,11 +63,11 @@ public class AuthorRepository {
             preparedStatement.setLong(1, aLong);
             var rs = preparedStatement.executeUpdate();
             connection.commit();
-            connection.close();
+
         }catch (SQLException e){
             e.printStackTrace();
             connection.rollback();
-            connection.close();
+
         }
     }
 
@@ -84,12 +84,12 @@ public class AuthorRepository {
             statement.setString(6, authorEntity.getWebsiteurl());
             statement.executeUpdate();
             connection.commit();
-            connection.close();
+
             return authorEntity;
         }catch (SQLException e){
             e.printStackTrace();
             connection.rollback();
-            connection.close();
+
             return  null;
         }
     }
@@ -105,7 +105,7 @@ public class AuthorRepository {
             preparedStatement.setString(5, author.getPictureurl());
             preparedStatement.setString(6, author.getWebsiteurl());
             preparedStatement.executeUpdate();
-            connection.close();
+            
             return author;
         } catch (SQLException e) {
             e.printStackTrace();

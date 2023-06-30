@@ -21,7 +21,7 @@ public class BookRepository {
                     resultSet.getString(5)) : null;
         } catch (SQLException e) {
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class BookRepository {
                         resultSet.getString(4),
                         resultSet.getString(5)));
             }
-            connection.close();
+
             return books;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class BookRepository {
                     statement.close();
                 }
                 if (connection != null) {
-                    connection.close();
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -86,7 +86,7 @@ public class BookRepository {
             preparedStatement.setString(4, bookEntity.getPicture());
             preparedStatement.setLong(5, id);
             preparedStatement.executeUpdate();
-            connection.close();
+
             return bookEntity;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -104,7 +104,7 @@ public class BookRepository {
             preparedStatement.setString(3, book.getDescription());
             preparedStatement.setString(4, book.getPicture());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return book;
         } catch (SQLException e) {
             e.printStackTrace();

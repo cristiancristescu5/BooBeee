@@ -13,7 +13,7 @@ public class GroupRepository {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "select * from group_ where id = '" + aLong + "'")) {
-            connection.close();
+
             return resultSet.next() ? new GroupEntity(
                     resultSet.getLong(1),
                     resultSet.getString(2),
@@ -21,7 +21,7 @@ public class GroupRepository {
                     resultSet.getTimestamp(4),
                     resultSet.getInt(5)): null;
         } catch (SQLException e) {
-            connection.close();
+
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class GroupRepository {
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
             statement.close();
-            connection.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -56,7 +56,7 @@ public class GroupRepository {
                         resultSet.getTimestamp(4),
                         resultSet.getInt(5)));
             }
-            connection.close();
+
             return groups;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class GroupRepository {
             preparedStatement.setInt(4, group.getMembersCount());
             preparedStatement.setLong(5, id);
             preparedStatement.executeUpdate();
-            connection.close();
+
             return group;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -108,7 +108,7 @@ public class GroupRepository {
         )){
             preparedStatement.setString(1, name1);
             preparedStatement.executeUpdate();
-            connection.close();
+
         }catch(SQLException e){
             System.out.println(e.getMessage());
             connection.rollback();
@@ -121,7 +121,7 @@ public class GroupRepository {
         )){
             preparedStatement.setString(1, name);
             preparedStatement.executeUpdate();
-            connection.close();
+
         }catch(SQLException e){
             System.out.println(e.getMessage());
             connection.rollback();
@@ -137,7 +137,7 @@ public class GroupRepository {
             preparedStatement.setTimestamp(3, group.getCreatedat());
             preparedStatement.setInt(4, group.getMembersCount());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return group;
         } catch (SQLException e) {
             e.printStackTrace();

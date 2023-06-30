@@ -46,7 +46,7 @@ public class BookAuthorsRepository {
             preparedStatement.setLong(1, bookAuthors.getBookId());
             preparedStatement.setLong(2, bookAuthors.getAuthorId());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return bookAuthors;
         } catch (SQLException e) {
             e.printStackTrace();

@@ -13,7 +13,7 @@ public class ReviewRepository{
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(
                      "select * from review where id = '" + aLong + "'")) {
-            connection.close();
+
             return resultSet.next() ? new ReviewEntity(
                     resultSet.getLong(1),
                     resultSet.getInt(2),
@@ -22,7 +22,7 @@ public class ReviewRepository{
                     resultSet.getLong(5),
                     resultSet.getLong(6)) : null;
         } catch (SQLException e) {
-            connection.close();
+
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class ReviewRepository{
                         resultSet.getLong(5),
                         resultSet.getLong(6)));
             }
-            connection.close();
+
             return reviews;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,7 +62,7 @@ public class ReviewRepository{
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
             statement.close();
-            connection.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
@@ -85,7 +85,7 @@ public class ReviewRepository{
                         rs.getLong(5),
                         rs.getLong(6)));
             }
-            connection.close();
+
             return reviews;
         }catch (SQLException e){
             e.printStackTrace();
@@ -103,7 +103,7 @@ public class ReviewRepository{
             preparedStatement.setLong(4, review.getUserId());
             preparedStatement.setLong(5, review.getBookId());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return review;
         } catch (SQLException e) {
             e.printStackTrace();

@@ -12,8 +12,8 @@ public class UserRepository{
             Connection connection = DataBase.getConnection();
             try (Statement statement = connection.createStatement();
                  ResultSet resultSet = statement.executeQuery(
-                         "select * from users users id = '" + aLong + "'")) {
-                connection.close();
+                         "select * from users where id = '" + aLong + "'")) {
+
                 return resultSet.next() ? new UserEntity(
                         resultSet.getLong(1),
                         resultSet.getString(2),
@@ -24,7 +24,7 @@ public class UserRepository{
                         resultSet.getTimestamp(7),
                         resultSet.getBoolean(8)) : null;
             } catch (SQLException e) {
-                connection.close();
+
                 return null;
             }
     }
@@ -47,7 +47,7 @@ public class UserRepository{
             ):null;
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -68,7 +68,7 @@ public class UserRepository{
                     rs.getTimestamp(7),
                     rs.getBoolean(8)) : null;
         }catch (SQLException e){
-            connection.close();
+
             return null;
         }
     }
@@ -81,7 +81,7 @@ public class UserRepository{
             statement.setLong(1, aLong);
             statement.executeUpdate();
             connection.commit();
-            connection.close();
+
         }catch (SQLException e){
             e.printStackTrace();
             connection.rollback();
@@ -111,7 +111,7 @@ public class UserRepository{
             return users;
         }catch(SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -150,7 +150,7 @@ public class UserRepository{
             preparedStatement.setTimestamp(6, user.getUpdatedat());
             preparedStatement.setBoolean(7, user.getVerified());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return findByEmail(user.getEmail());
         }catch(SQLException e){
             e.printStackTrace();

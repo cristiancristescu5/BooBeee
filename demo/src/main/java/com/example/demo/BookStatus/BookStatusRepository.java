@@ -16,11 +16,11 @@ public class BookStatusRepository {
                 "select * from book_status where book_id = ?")){
             statement.setLong(1, aLong);
             var rs = statement.executeQuery();
-            connection.close();
+
             return rs.next() ?  new BookStatusEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getString(4)) : null;
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -38,11 +38,11 @@ public class BookStatusRepository {
                                 rs.getLong(3), rs.getString(4))
                 );
             }
-            connection.close();
+
             return bookStatusEntities;
         }catch (SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
 
@@ -101,7 +101,7 @@ public class BookStatusRepository {
             preparedStatement.setLong(2, bookStatus.getUserId());
             preparedStatement.setString(3, bookStatus.getStatus());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return bookStatus;
         } catch (SQLException e) {
             e.printStackTrace();

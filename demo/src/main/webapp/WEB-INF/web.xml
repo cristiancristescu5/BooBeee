@@ -34,11 +34,19 @@
             <param-name>cors.exposed.headers</param-name>
             <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials,Access-Control-Allow-Methods</param-value>
         </init-param>
+<!--        <init-param>-->
+<!--            <param-name></param-name>-->
+<!--            <param-value></param-value>-->
+<!--        </init-param>-->
     </filter>
 
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/books/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/logout</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

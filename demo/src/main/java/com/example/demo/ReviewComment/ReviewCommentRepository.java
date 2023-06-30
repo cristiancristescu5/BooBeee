@@ -19,7 +19,7 @@ public class ReviewCommentRepository {
             return rs.next() ? new ReviewCommentEntity(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4)) : null;
         }catch(SQLException e){
             e.printStackTrace();
-            connection.close();
+
             return null;
         }
     }
@@ -72,7 +72,7 @@ public class ReviewCommentRepository {
             preparedStatement.setLong(2, reviewComment.getReviewId());
             preparedStatement.setLong(3, reviewComment.getCommentId());
             preparedStatement.executeUpdate();
-            connection.close();
+
             return reviewComment;
         } catch (SQLException e) {
             e.printStackTrace();
