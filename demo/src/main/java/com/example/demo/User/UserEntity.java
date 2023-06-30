@@ -13,7 +13,19 @@ public class UserEntity implements Serializable {
     private Timestamp createdat;
     private Timestamp updatedat;
     private Boolean verified;
+    private boolean isAdmin;
     public UserEntity(){}
+    public UserEntity(long id, String name, String email, String password, String pictureurl, Timestamp createdat, Timestamp updatedat, Boolean verified, boolean isAdmin) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.pictureurl = pictureurl;
+        this.createdat = createdat;
+        this.updatedat = updatedat;
+        this.verified = verified;
+        this.isAdmin = isAdmin;
+    }
 
     public UserEntity(String name, String email, String password, String pictureurl, Timestamp createdat, Timestamp updatedat, Boolean verified) {
         this.name = name;
@@ -34,6 +46,14 @@ public class UserEntity implements Serializable {
         this.createdat = createdat;
         this.updatedat = updatedat;
         this.verified = verified;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
     public long getId() {

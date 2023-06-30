@@ -139,8 +139,9 @@ public class UserRepository{
         user.setVerified(false);
         user.setUpdatedat(new Timestamp(System.currentTimeMillis()));
         user.setCreatedat(new Timestamp(System.currentTimeMillis()));
+        user.setAdmin(false);
         try(PreparedStatement preparedStatement = connection.prepareStatement(
-                "insert into users (name, email, password, pictureurl, createdat, updatedat, verified) values (?,?,?,?,?,?,?)"
+                "insert into users (name, email, password, pictureurl, createdat, updatedat, verified, admin) values (?,?,?,?,?,?,?,?)"
         )){
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getEmail());
@@ -149,6 +150,7 @@ public class UserRepository{
             preparedStatement.setTimestamp(5, user.getCreatedat());
             preparedStatement.setTimestamp(6, user.getUpdatedat());
             preparedStatement.setBoolean(7, user.getVerified());
+            preparedStatement.setBoolean(8, user.isAdmin());
             preparedStatement.executeUpdate();
 
             return findByEmail(user.getEmail());
