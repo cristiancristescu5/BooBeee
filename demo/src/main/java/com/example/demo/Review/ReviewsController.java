@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/reviews", "/reviews/*"})
@@ -131,6 +132,54 @@ public class ReviewsController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // /api/v1/reviews/{reviewId}
+        var words = req.getRequestURI().split("/");
+        resp.setStatus(200);
+        resp.setContentType("applications/json");
+        PrintWriter out = resp.getWriter();
+        if(words.length==5){
+            Long reviewId = Long.parseLong(words[4]);
+            try{
+                reviewService.deleteReview(reviewId);
+            }catch (Exception e){
+                resp.setStatus(400);
+                out.println("Bad Request");
+                out.close();
+                return;
+            }
+            resp.setStatus(200);
+            out.println("Review Deleted");
+            out.close();
+            return;
+        }
+        resp.setStatus(400);
+        out.println("Bad Request");
+        out.close();
+    }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // /api/v1/reviews/{reviewId}
+        var words = req.getRequestURI().split("/");
+        PrintWriter out = resp.getWriter();
+        resp.setStatus(200);
+        resp.setContentType("application/json");
+        Long id = Long.parseLong(words[4]);
+        ReviewEntity review = objectMapper.readValue(RequestBodyParser.parseRequest(req), ReviewEntity.class);
+        ReviewEntity reviewEntity = null;
+        try{
+            reviewEntity = reviewService.updateById(id, review);
+        }catch (SQLException | IllegalArgumentException e){
+            throw new RuntimeException(e);
+        }
+        if(reviewEntity == null){
+            resp.setStatus(400);
+            out.println("Bad Request");
+            out.close();
+            return;
+        }
+        String responseBody = objectMapper.writeValueAsString(reviewEntity);
+        out.println(responseBody);
+        out.close();
     }
 }

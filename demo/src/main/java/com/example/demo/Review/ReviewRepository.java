@@ -65,7 +65,6 @@ public class ReviewRepository{
             statement.setLong(1, aLong);
             var rs = statement.executeUpdate();
             connection.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
             connection.rollback();
@@ -112,6 +111,26 @@ public class ReviewRepository{
             connection.close();
             return review;
         } catch (SQLException e) {
+            e.printStackTrace();
+            connection.close();
+            return null;
+        }
+    }
+    public ReviewEntity updateById(Long id, ReviewEntity entity)throws SQLException{
+        if(entity.getRating()==null || entity.getDescription() == null) {
+            throw new IllegalArgumentException("The review is null");
+        }
+        Connection connection = DataBase.getConnection();
+        try(PreparedStatement statement = connection.prepareStatement(
+                "update review set description = ?, rating = ? where id = ?"
+        )){
+            statement.setString(1, entity.getDescription());
+            statement.setInt(2, entity.getRating());
+            statement.setLong(3, id);
+            statement.executeUpdate();
+            connection.close();
+            return findByID(id);
+        }catch (SQLException e){
             e.printStackTrace();
             connection.close();
             return null;

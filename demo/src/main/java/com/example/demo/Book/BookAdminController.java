@@ -44,7 +44,7 @@ public class BookAdminController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var words = req.getRequestURI().split("/");
-        resp.setStatus(400);
+        resp.setStatus(200);
         resp.setContentType("application/JSON");
         PrintWriter out = resp.getWriter();
         if (words.length == 5 && req.getMethod().equals("DELETE")) {
@@ -52,7 +52,7 @@ public class BookAdminController extends HttpServlet {
             Long bookId = Long.parseLong(id);
             try {
                 bookService.deleteBook(bookId);
-            } catch (SQLException e) {
+            } catch (IllegalArgumentException | SQLException e) {
                 throw new RuntimeException(e);
             }
             out.println("Book deleted");
