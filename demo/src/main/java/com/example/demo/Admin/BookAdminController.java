@@ -11,6 +11,8 @@ import com.example.demo.BookGenres.BookGenresService;
 import com.example.demo.Genre.GenreEntity;
 import com.example.demo.Genre.GenreService;
 import com.example.demo.RequestBodyParser;
+import com.example.demo.User.UserEntity;
+import com.example.demo.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -33,6 +35,7 @@ public class BookAdminController extends HttpServlet {
     private final GenreService genreService = new GenreService();
     private final BookGenresService bookGenresService = new BookGenresService();
     private final BookAuthorsService bookAuthorsService = new BookAuthorsService();
+    private final UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -40,6 +43,36 @@ public class BookAdminController extends HttpServlet {
         var words = req.getRequestURI().split("/");
         resp.setStatus(200);
         PrintWriter out = resp.getWriter();
+        String email;
+        try {
+            email = req.getAttribute("email").toString();
+        }catch (NullPointerException e){
+            resp.setStatus(401);
+            out.println("nu e voie");
+            out.close();
+            return;
+        }
+        UserEntity user = null;
+        try {
+            user = userService.findByEmail(email);
+        } catch (Exception e) {
+            resp.setStatus(401);
+            out.println("nu e voie");
+            out.close();
+            return;
+        }
+        if (user == null) {
+            resp.setStatus(401);
+            out.println("nu e voie");
+            out.close();
+            return;
+        }
+        if (!user.isAdmin()) {
+            resp.setStatus(401);
+            out.println("nu e voie");
+            out.close();
+            return;
+        }
         if (words.length == 4 && words[3].equals("admin")) {
             resp.setStatus(200);
             out.println("Bau");
@@ -81,15 +114,15 @@ public class BookAdminController extends HttpServlet {
                 return;
             }
             BookEntity savedBook = null;
-            try{
+            try {
                 savedBook = bookService.addBook(book);
-            }catch (Exception e){
+            } catch (Exception e) {
                 resp.setStatus(400);
                 out.println("Bad Request");
                 out.close();
                 return;
             }
-            if(savedBook == null){
+            if (savedBook == null) {
                 resp.setStatus(400);
                 out.println("Bad Request");
                 out.close();
@@ -97,16 +130,16 @@ public class BookAdminController extends HttpServlet {
             }
             BookGenresEntity bookGenresEntity = null;
             BookAuthorsEntity bookAuthorsEntity = null;
-            try{
+            try {
                 bookGenresEntity = bookGenresService.create(new BookGenresEntity(savedBook.getId(), genre1.getId()));
                 bookAuthorsEntity = bookAuthorsService.create(new BookAuthorsEntity(savedBook.getId(), authorId));
-            }catch (Exception e){
+            } catch (Exception e) {
                 resp.setStatus(400);
                 out.println("Bad Request");
                 out.close();
                 return;
             }
-            if(bookAuthorsEntity == null || bookGenresEntity == null){
+            if (bookAuthorsEntity == null || bookGenresEntity == null) {
                 resp.setStatus(400);
                 out.println("Bad Request");
                 out.close();

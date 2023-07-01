@@ -1,5 +1,8 @@
 package com.example.demo.Author;
 
+import com.example.demo.Book.BookEntity;
+import com.example.demo.BookAuthors.BookAuthorsEntity;
+import com.example.demo.BookAuthors.BookAuthorsService;
 import com.example.demo.RequestBodyParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -17,13 +20,13 @@ import java.util.List;
 public class AuthorController extends HttpServlet {
     private final AuthorService authorService = new AuthorService();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final BookAuthorsService bookAuthorsService = new BookAuthorsService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/JSON");
         resp.setStatus(200);
         PrintWriter out = resp.getWriter();
-
         var words = req.getRequestURI().split("/");
         if (words.length == 5) {
             String id = words[4];
@@ -55,6 +58,33 @@ public class AuthorController extends HttpServlet {
                 out.close();
                 return;
             }
+        }
+
+        // api/v1/authors/{authorId}/books
+        if (words.length == 6 && words[5].equals("books")) {
+            Long authId = Long.parseLong(words[4]);
+            List<BookEntity> books = null;
+            String responseBody;
+            try {
+                books = bookAuthorsService.getBookByAuthorId(authId);
+                responseBody = objectMapper.writeValueAsString(books);
+            } catch (Exception e) {
+                e.printStackTrace();
+                resp.setStatus(400);
+                out.println("Bad request");
+                out.close();
+                return;
+            }
+            if (books == null) {
+                resp.setStatus(400);
+                out.println("Bad request");
+                out.close();
+                return;
+            }
+            resp.setStatus(200);
+            out.println(responseBody);
+            out.close();
+            return;
         }
         resp.setStatus(400);
         out.println("Bad request");
