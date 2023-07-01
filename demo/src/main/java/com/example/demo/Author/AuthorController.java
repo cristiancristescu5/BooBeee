@@ -23,6 +23,7 @@ public class AuthorController extends HttpServlet {
         resp.setContentType("application/JSON");
         resp.setStatus(200);
         PrintWriter out = resp.getWriter();
+
         var words = req.getRequestURI().split("/");
         if (words.length == 5) {
             String id = words[4];

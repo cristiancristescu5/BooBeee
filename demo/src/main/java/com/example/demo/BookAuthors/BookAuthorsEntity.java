@@ -14,6 +14,12 @@ public class BookAuthorsEntity implements Serializable {
         this.bookId = bookId;
         this.authorId = authorId;
     }
+
+    public BookAuthorsEntity(Long bookId, Long authorId) {
+        this.bookId = bookId;
+        this.authorId = authorId;
+    }
+
     public BookAuthorsEntity(){}
 
     public long getId() {

@@ -17,6 +17,13 @@ public class GenreService {
             return genre;
         }
     }
+    public GenreEntity getGenreByName(String name)throws SQLException{
+        var genre = genreRepository.findByName(name);
+        if(genre == null){
+            throw new IllegalArgumentException("Genre does not exist");
+        }
+        return genre;
+    }
     public GenreEntity updateGenre(Long id, GenreEntity genreEntity) throws SQLException{
         GenreEntity genre = genreRepository.findByID(id);
         if(genre == null){

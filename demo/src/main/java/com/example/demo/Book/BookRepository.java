@@ -93,7 +93,6 @@ public class BookRepository {
 
     public BookEntity create(BookEntity book) throws SQLException {
         Connection connection = DataBase.getConnection();
-        book.setIsbn(UUID.randomUUID().toString());
         book.setPicture(UUID.randomUUID().toString());
         try(PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into book (title, isbn, description, picture) values (?, ?, ?, ?)")){

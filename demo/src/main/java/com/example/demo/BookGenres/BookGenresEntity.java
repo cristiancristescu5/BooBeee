@@ -14,6 +14,12 @@ public class BookGenresEntity implements Serializable {
         this.bookId = bookId;
         this.genreId = genreId;
     }
+
+    public BookGenresEntity(Long bookId, Long genreId) {
+        this.bookId = bookId;
+        this.genreId = genreId;
+    }
+
     public BookGenresEntity(){}
 
     public long getId() {

@@ -21,4 +21,7 @@ public class BookAuthorsService {
         }
         return authorRepository.findByID(bookAuthorsEntities.get(0).getAuthorId());
     }
+    public BookAuthorsEntity create(BookAuthorsEntity bookAuthorsEntity)throws SQLException{
+        return bookAuthorsRepository.create(bookAuthorsEntity);
+    }
 }

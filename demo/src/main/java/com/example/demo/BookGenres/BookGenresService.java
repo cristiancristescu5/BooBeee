@@ -29,4 +29,7 @@ public class BookGenresService {
         }
         return books;
     }
+    public BookGenresEntity create(BookGenresEntity genre)throws SQLException{
+        return bookGenresRepository.create(genre);
+    }
 }
