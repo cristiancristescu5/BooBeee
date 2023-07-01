@@ -25,7 +25,7 @@ import java.security.spec.ECField;
 import java.sql.SQLException;
 import java.util.UUID;
 
-@WebServlet(urlPatterns = {"/bookAdmin", "/admin", "/deleteUsers", "/deleteBooks", "/deleteGenres", "/deleteAuthors"})
+@WebServlet(urlPatterns = {"/bookAdmin", "/admin"})
 public class BookAdminController extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BookService bookService = new BookService();
