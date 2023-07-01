@@ -145,7 +145,7 @@ public class BookAdminController extends HttpServlet {
                 out.close();
                 return;
             }
-            resp.setStatus(200);
+            resp.setStatus(201);
             out.println("created");
             out.close();
             return;

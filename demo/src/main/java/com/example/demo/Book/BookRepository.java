@@ -102,11 +102,36 @@ public class BookRepository {
             preparedStatement.setString(4, book.getPicture());
             preparedStatement.executeUpdate();
             connection.close();
-            return book;
+            return findMaxID();
         } catch (SQLException e) {
             e.printStackTrace();
             connection.close();
             return null;
+        }
+    }
+    public BookEntity findMaxID()throws SQLException{
+        Connection connection = DataBase.getConnection();
+        Long id;
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select max(id) from book"
+        )) {
+            var rs = statement.executeQuery();
+            id = rs.next() ? rs.getLong(1) : null;
+        }
+        try(PreparedStatement statement = connection.prepareStatement(
+                "select * from book where id = ?"
+        )) {
+            statement.setLong(1, id);
+            var rs = statement.executeQuery();
+            BookEntity book = rs.next() ? new BookEntity(
+                    rs.getLong(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5)
+            ) : null;
+            connection.close();
+            return book;
         }
     }
 }

@@ -104,6 +104,7 @@
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/authors</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/genres</url-pattern>

@@ -29,37 +29,42 @@ public class AdminFilter implements Filter {
         System.out.println(Arrays.toString(words));
         Cookie[] cookies = request.getCookies();
         String auth = null;
-        System.out.println("filtrez adminiiiii");
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("sessionId")) {
-                    auth = cookie.getValue();
+        if (request.getMethod().equals("POST")) {
+            System.out.println("filtrez adminiiiii");
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("sessionId")) {
+                        auth = cookie.getValue();
+                    }
                 }
             }
-        }
-        System.out.println(auth);
-        if (auth != null) {
-            try {
-                Jws<Claims> claimsJws = Jwts.parser()
-                        .setSigningKey(SECRET_KEY)
-                        .parseClaimsJws(auth);
-                String email = claimsJws.getBody().getSubject();
-                if (isUserAdmin(email)) {
-                    request.setAttribute("email", email);
-                    System.out.println(email);
-                    filterChain.doFilter(request, response);
-                } else {
+            System.out.println(auth);
+
+            if (auth != null) {
+                try {
+                    Jws<Claims> claimsJws = Jwts.parser()
+                            .setSigningKey(SECRET_KEY)
+                            .parseClaimsJws(auth);
+                    String email = claimsJws.getBody().getSubject();
+                    if (isUserAdmin(email)) {
+                        request.setAttribute("email", email);
+                        System.out.println(email);
+                        filterChain.doFilter(request, response);
+                    } else {
+                        System.out.println("not admin");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
+                } catch (Exception e) {
                     System.out.println("not admin");
+                    e.printStackTrace();
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
-            } catch (Exception e) {
+            } else {
                 System.out.println("not admin");
-                e.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         } else {
-            System.out.println("not admin");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response);
         }
     }
 
